@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
     /// <param name="context">入力時に呼び出されるコールバック関数の状態</param>
     public void OnMove(InputAction.CallbackContext context)
     {
-        // Moveアクションが押されている場合
+        // Moveアクションが押された場合
         if (context.performed)
         {
             _moveControl.Move(context.ReadValue<Vector2>());
@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
     /// <param name="context">入力時に呼び出されるコールバック関数の状態</param>
     public void OnSprint(InputAction.CallbackContext context)
     {
-        // スプリントアクションが押されている場合
+        // スプリントアクションが押された場合
         if (context.performed)
         {
             _moveControl.CurrentSpeed = _sprintSpeed;

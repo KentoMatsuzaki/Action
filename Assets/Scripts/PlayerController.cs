@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     public float _normalSpeed = 1.2f;
 
     /// <summary>スプリント時の速度</summary>
-    public float _sprintSpeed = 4f;
+    public float _sprintSpeed = 7.5f;
 
     private void Start()
     {
@@ -51,13 +51,13 @@ public class PlayerController : MonoBehaviour
         // スプリントアクションが押された場合
         if (context.performed)
         {
-            _moveControl.CurrentSpeed = _sprintSpeed;
+            _moveControl.MoveSpeed = _sprintSpeed;
             Debug.Log("Sprint is Pressed.");
         }
         // スプリントアクションがリリースされた場合
         else if (context.canceled)
         {
-            _moveControl.CurrentSpeed = _normalSpeed;
+            _moveControl.MoveSpeed = _normalSpeed;
             Debug.Log("Sprint is Released.");
         }
     }

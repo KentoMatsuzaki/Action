@@ -84,17 +84,14 @@ public class PlayerController : MonoBehaviour
         if (context.performed)
         {
             Debug.Log("Jump is Pressed.");
-            _jumpControl.Jump(true);
+            _animator.Play("Jump");
         }
     }
 
-    /// <summary>
-    /// JumpControlのコールバックから呼ばれるイベント
-    /// （入力時ではなくジャンプ処理時にアニメーションを再生させるため）
-    /// </summary>
-    public void OnJumpStart()
+    /// <summary>Jumpアニメーションのアニメーションイベントから呼ばれる実際のジャンプ処理</summary>
+    public void JumpUp()
     {
-        _animator.Play("Jump");
+        _jumpControl.Jump(true);
     }
 
     /// <summary>アニメーターの「Speed」パラメーターを更新する</summary>

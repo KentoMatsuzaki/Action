@@ -939,7 +939,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _normalSpeed: 1.2
-  _sprintSpeed: 4
+  _sprintSpeed: 5
 --- !u!114 &1949845270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -952,7 +952,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a438fe455bc974e68babcfff4ef6d954, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gravityScale: 2
+  _gravityScale: 1.5
   _onLanding:
     m_PersistentCalls:
       m_Calls: []

@@ -939,7 +939,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _normalSpeed: 1.2
-  _sprintSpeed: 7.5
+  _sprintSpeed: 4
 --- !u!114 &1949845270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1009,7 +1009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8b4553468b44109b38014c905d4f9e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JumpHeight: 1
+  JumpHeight: 1.2
   MaxAerialJumpCount: 0
   Drag: 2
   _turnSpeed: 0
@@ -1024,7 +1024,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1949845269}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnJumpStart
+        m_MethodName: JumpStart
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

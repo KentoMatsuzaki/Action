@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
     public float _normalSpeed = 1.2f;
 
     /// <summary>スプリント時の速度</summary>
-    public float _sprintSpeed = 7.5f;
+    public float _sprintSpeed = 4.0f;
 
     private void Start()
     {
@@ -84,14 +84,14 @@ public class PlayerController : MonoBehaviour
         if (context.performed)
         {
             Debug.Log("Jump is Pressed.");
-            _animator.Play("Jump");
+            _jumpControl.Jump(true);
         }
     }
 
-    /// <summary>Jumpアニメーションのアニメーションイベントから呼ばれる実際のジャンプ処理</summary>
-    public void JumpUp()
+    /// <summary>JumpControlから呼ばれるイベント</summary>
+    public void JumpStart()
     {
-        _jumpControl.Jump(true);
+        _animator.Play("Jump Up");
     }
 
     /// <summary>アニメーターの「Speed」パラメーターを更新する</summary>

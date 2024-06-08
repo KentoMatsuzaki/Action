@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 789c22ffd96bd864d9585394fe0213a3
+guid: 83524de046858a44388b6875a903c637
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -31,11 +31,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: mixamo.com
+      name: mixamo.com (1)
       takeName: mixamo.com
-      internalID: -203655887218126122
-      firstFrame: 0
-      lastFrame: 57
+      internalID: -4469183485442372851
+      firstFrame: 9.9
+      lastFrame: 25
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -54,14 +54,7 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events:
-      - time: 0.28226727
-        functionName: JumpUp
-        data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 72f0f96c8cb65394da66fb1614502d2c, type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
+      events: []
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

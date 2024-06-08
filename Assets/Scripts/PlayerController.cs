@@ -89,9 +89,16 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>JumpControlから呼ばれるイベント</summary>
-    public void JumpStart()
+    public void OnJumpStart()
     {
-        _animator.Play("Jump Up");
+        if (_jumpControl.AerialJumpCount >= _jumpControl.MaxAerialJumpCount)
+        {
+            _animator.Play("Double Jump");
+        }
+        else
+        {
+            _animator.Play("Jump Up");
+        }
     }
 
     /// <summary>アニメーターの「Speed」パラメーターを更新する</summary>

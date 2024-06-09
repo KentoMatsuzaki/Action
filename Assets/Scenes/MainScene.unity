@@ -1116,6 +1116,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _normalSpeed: 1.2
   _sprintSpeed: 7.5
+  _dashCoolTime: 0.5
+  _dashDistance: 15
 --- !u!114 &1949845270
 MonoBehaviour:
   m_ObjectHideFlags: 0

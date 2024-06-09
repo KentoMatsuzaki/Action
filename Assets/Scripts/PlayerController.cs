@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 using Unity.TinyCharacterController.Control;
 using Unity.TinyCharacterController.Check;
 using Unity.TinyCharacterController.Effect;
+using System.Collections;
+using System;
 
 /// <summary>プレイヤー制御クラス</summary>
 public class PlayerController : MonoBehaviour
@@ -23,10 +25,16 @@ public class PlayerController : MonoBehaviour
     GroundCheck _groundCheck;
 
     /// <summary>通常時の速度</summary>
-    public float _normalSpeed = 1.2f;
+    [SerializeField] float _normalSpeed = 1.2f;
 
     /// <summary>スプリント時の速度</summary>
-    public float _sprintSpeed = 4.0f;
+    [SerializeField] float _sprintSpeed = 4.0f;
+
+    /// <summary>ブリンクのクールタイム</summary>
+    [SerializeField] float _dashCoolTime = 0.5f;
+
+    /// <summary>ブリンクの移動距離</summary>
+    [SerializeField] float _dashDistance = 15f;
 
     private void Start()
     {
@@ -46,77 +54,71 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>PlayerInputから呼ばれるイベント</summary>
-    /// <param name="context">入力時に呼び出されるコールバック関数の状態</param>
+    /// <param name="context">ボタン入力時に呼び出されるコールバック</param>
     public void OnMove(InputAction.CallbackContext context)
     {
-        // Moveアクションが押された場合
-        if (context.performed)
-        {
-            Debug.Log("Move is Pressed.");
-            _moveControl.Move(context.ReadValue<Vector2>()); 
-        }
-        // Moveアクションがリリースされた場合
-        else if (context.canceled)
-        {
-            Debug.Log("Move is Released.");
-            _moveControl.Move(Vector2.zero);
-        }
+        // 入力のログを出力する
+        Debug.Log("Move is Pressed.");
+
+        // Moveが押された場合
+        if (context.performed) _moveControl.Move(context.ReadValue<Vector2>()); 
+
+        // Moveがリリースされた場合
+        else if (context.canceled) _moveControl.Move(Vector2.zero);
     }
 
     /// <summary>PlayerInputから呼ばれるイベント</summary>
-    /// <param name="context">入力時に呼び出されるコールバック関数の状態</param>
+    /// <param name="context">ボタン入力時に呼び出されるコールバック</param>
     public void OnSprint(InputAction.CallbackContext context)
     {
-        // スプリントアクションが押された場合
-        if (context.performed)
-        {
-            Debug.Log("Sprint is Pressed.");
-            _moveControl.MoveSpeed = _sprintSpeed;
-        }
-        // スプリントアクションがリリースされた場合
-        else if (context.canceled)
-        {
-            Debug.Log("Sprint is Released.");
-            _moveControl.MoveSpeed = _normalSpeed;
-        }
+        // 入力のログを出力する
+        Debug.Log("Sprint is Pressed.");
+
+        // スプリントが押された場合
+        if (context.performed) _moveControl.MoveSpeed = _sprintSpeed;
+
+        // スプリントがリリースされた場合
+        else if (context.canceled) _moveControl.MoveSpeed = _normalSpeed;
     }
 
     /// <summary>PlayerInputから呼ばれるイベント</summary>
-    /// <param name="context">入力時に呼び出されるコールバック関数の状態</param>
+    /// <param name="context">ボタン入力時に呼び出されるコールバック</param>
     public void OnJump(InputAction.CallbackContext context)
     {
+        // 入力のログを出力する
+        Debug.Log("Jump is Pressed.");
+
         // ジャンプアクションが押された場合
-        if (context.performed)
-        {
-            Debug.Log("Jump is Pressed.");
-            _jumpControl.Jump(true);
-        }
+        if (context.performed) _jumpControl.Jump(true);
     }
 
-    /// <summary>JumpControlから呼ばれるイベント</summary>
+    /// <summary>JumpControlから呼ばれるコールバック</summary>
     public void OnJumpStart()
     {
-        if (_jumpControl.AerialJumpCount >= _jumpControl.MaxAerialJumpCount)
-        {
-            _animator.Play("Double Jump");
-        }
-        else
-        {
-            _animator.Play("Jump Up");
-        }
+        // 呼び出しのログを出力する
+        Debug.Log("Jump Start is Called");
+
+        // 現在のジャンプ回数と最大ジャンプ回数を比較してジャンプを切り替える
+        _animator.Play
+            (_jumpControl.AerialJumpCount >= _jumpControl.MaxAerialJumpCount ? 
+                "Double Jump" : "Jump Up");
     }
 
     /// <summary>PlayerInputから呼ばれるイベント</summary>
-    /// <param name="context">入力時に呼び出されるコールバック関数の状態</param>
+    /// <param name="context">ボタン入力時に呼び出されるコールバック</param>
     public void OnDash(InputAction.CallbackContext context)
     {
+        // 入力のログを出力する
+        Debug.Log("Dash is Pressed.");
+
         // ダッシュ可能なら
-        if(context.performed)
+        if (context.performed && _animator.GetBool("CanDash"))
         {
-            Debug.Log("Dash is Pressed.");
             _animator.SetBool("CanDash", false);
-            _extraForce.AddForce(transform.forward * 15f);
+            _extraForce.AddForce(transform.forward * _dashDistance);
             _animator.Play("Dash Start");
+            StartCoroutine(Wait(_dashCoolTime,
+                () => _animator.SetBool("CanDash", true)));
         }
     }
 
@@ -130,5 +132,14 @@ public class PlayerController : MonoBehaviour
     void SetIsOnGround()
     {
         _animator.SetBool("IsOnGround", _groundCheck.IsOnGround ? true : false);
+    }
+
+    /// <summary>クールタイム用のコルーチン</summary>
+    /// <param name="time">待ち時間</param>
+    /// <param name="action">待機後に実行する処理</param>
+    IEnumerator Wait(float time, Action action)
+    {
+        yield return new WaitForSeconds(time);
+        action?.Invoke();
     }
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.TinyCharacterController.Control;
 using Unity.TinyCharacterController.Check;
+using Unity.TinyCharacterController.Effect;
 
 /// <summary>プレイヤー制御クラス</summary>
 public class PlayerController : MonoBehaviour
@@ -14,6 +15,9 @@ public class PlayerController : MonoBehaviour
 
     /// <summary>プレイヤーのジャンプ制御</summary>
     JumpControl _jumpControl;
+
+    /// <summary>プレイヤーの物理制御</summary>
+    ExtraForce _extraForce;
 
     /// <summary>プレイヤーの接地判定</summary>
     GroundCheck _groundCheck;
@@ -30,6 +34,7 @@ public class PlayerController : MonoBehaviour
         _moveControl = GetComponent<MoveControl>();
         _groundCheck = GetComponent<GroundCheck>();
         _jumpControl = GetComponent<JumpControl>();
+        _extraForce = GetComponent<ExtraForce>();
     }
     private void Update()
     {
@@ -98,6 +103,20 @@ public class PlayerController : MonoBehaviour
         else
         {
             _animator.Play("Jump Up");
+        }
+    }
+
+    /// <summary>PlayerInputから呼ばれるイベント</summary>
+    /// <param name="context">入力時に呼び出されるコールバック関数の状態</param>
+    public void OnDash(InputAction.CallbackContext context)
+    {
+        // ダッシュ可能なら
+        if(context.performed)
+        {
+            Debug.Log("Dash is Pressed.");
+            _animator.SetBool("CanDash", false);
+            _extraForce.AddForce(transform.forward * 15f);
+            _animator.Play("Dash Start");
         }
     }
 

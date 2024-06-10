@@ -129,20 +129,20 @@ public class PlayerController : MonoBehaviour
     public void OnAttack(InputAction.CallbackContext context)
     {
         // 入力のログを出力する
-        Debug.Log("Attack is Pressed");
+        Debug.Log("Attack is Pressed.");
 
         // 攻撃アクションが長押しされた場合
         if(context.interaction is HoldInteraction && context.performed)
         {
-            _animator.SetTrigger("LongAtk");
+            _animator.SetTrigger("Long Attack");
         }
 
         // 攻撃アクションが短く押された場合
-        if(context.interaction is PressInteraction && context.performed)
+        else if(context.interaction is PressInteraction && context.performed)
         {
-            _animator.SetTrigger("ShortAtk");
+            Debug.Log("Set Par");
+            _animator.SetTrigger("Short Attack");
         }
-
     }
 
     /// <summary>アニメーターの「Speed」パラメーターを更新する</summary>

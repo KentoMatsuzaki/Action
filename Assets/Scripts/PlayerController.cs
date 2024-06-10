@@ -5,6 +5,7 @@ using Unity.TinyCharacterController.Check;
 using Unity.TinyCharacterController.Effect;
 using System.Collections;
 using System;
+using UnityEngine.InputSystem.Interactions;
 
 /// <summary>プレイヤー制御クラス</summary>
 public class PlayerController : MonoBehaviour
@@ -60,10 +61,10 @@ public class PlayerController : MonoBehaviour
         // 入力のログを出力する
         Debug.Log("Move is Pressed.");
 
-        // Moveが押された場合
+        // Moveアクションが押された場合
         if (context.performed) _moveControl.Move(context.ReadValue<Vector2>()); 
 
-        // Moveがリリースされた場合
+        // Moveアクションがリリースされた場合
         else if (context.canceled) _moveControl.Move(Vector2.zero);
     }
 
@@ -88,7 +89,7 @@ public class PlayerController : MonoBehaviour
         // 入力のログを出力する
         Debug.Log("Jump is Pressed.");
 
-        // ジャンプアクションが押された場合
+        // ジャンプが押された場合
         if (context.performed) _jumpControl.Jump(true);
     }
 
@@ -111,7 +112,7 @@ public class PlayerController : MonoBehaviour
         // 入力のログを出力する
         Debug.Log("Dash is Pressed.");
 
-        // ダッシュ可能なら
+        // ダッシュ可能ができる場合
         if (context.performed && _animator.GetBool("CanDash"))
         {
             _animator.SetBool("CanDash", false);
@@ -120,6 +121,28 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(Wait(_dashCoolTime,
                 () => _animator.SetBool("CanDash", true)));
         }
+    }
+
+
+    /// <summary>PlayerInputから呼ばれるイベント</summary>
+    /// <param name="context">ボタン入力時に呼び出されるコールバック</param>
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        // 入力のログを出力する
+        Debug.Log("Attack is Pressed");
+
+        // 攻撃アクションが長押しされた場合
+        if(context.interaction is HoldInteraction && context.performed)
+        {
+            _animator.SetTrigger("LongAtk");
+        }
+
+        // 攻撃アクションが短く押された場合
+        if(context.interaction is PressInteraction && context.performed)
+        {
+            _animator.SetTrigger("ShortAtk");
+        }
+
     }
 
     /// <summary>アニメーターの「Speed」パラメーターを更新する</summary>

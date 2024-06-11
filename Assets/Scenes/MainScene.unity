@@ -810,6 +810,7 @@ GameObject:
   - component: {fileID: 1949845264}
   - component: {fileID: 1949845263}
   - component: {fileID: 1949845273}
+  - component: {fileID: 1949845275}
   - component: {fileID: 1949845272}
   - component: {fileID: 1949845271}
   - component: {fileID: 1949845270}
@@ -1243,6 +1244,20 @@ MonoBehaviour:
   OnHitOtherCollider:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1949845275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949845261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a754bed4fe6aa4fdbb96f88f81bc0b17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MovePriority: 10
+  TurnPriority: 10
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

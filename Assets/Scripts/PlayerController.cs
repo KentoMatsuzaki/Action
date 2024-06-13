@@ -177,4 +177,28 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(time);
         action?.Invoke();
     }
+
+    /// <summary>右手のコライダーを有効化</summary>
+    public void EnableRightHandCol()
+    {
+
+    }
+
+    /// <summary>左手のコライダーを有効化</summary>
+    public void EnableLeftHandCol()
+    {
+
+    }
+
+    /// <summary>右足のコライダーを有効化</summary>
+    public void EnableRightFootCol()
+    {
+
+    }
+
+    /// <summary>左足のコライダーを有効化</summary>
+    public void EnableLeftFootCol()
+    {
+
+    }
 }

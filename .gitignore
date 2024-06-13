@@ -70,3 +70,8 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+Assets/GhostCharacter_Free.meta
+Assets/GhostCharacter_Free/AnimationClips.meta
+Assets/GhostCharacter_Free/AnimationClips/ghost_attack.anim.meta
+*.anim
+/Assets/GhostCharacter_Free

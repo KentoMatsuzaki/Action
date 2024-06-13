@@ -7,35 +7,47 @@ using System.Collections;
 using System;
 using UnityEngine.InputSystem.Interactions;
 
-/// <summary>プレイヤー制御クラス</summary>
+/// <summary>プレイヤー制御</summary>
 public class PlayerController : MonoBehaviour
 {
-    /// <summary>プレイヤーのアニメーター</summary>
+    /// <summary>アニメーター</summary>
     Animator _animator;
 
-    /// <summary>プレイヤーの移動制御</summary>
+    /// <summary>移動制御</summary>
     MoveControl _moveControl;
 
-    /// <summary>プレイヤーのジャンプ制御</summary>
+    /// <summary>ジャンプ制御</summary>
     JumpControl _jumpControl;
 
-    /// <summary>プレイヤーの物理制御</summary>
+    /// <summary>物理制御</summary>
     ExtraForce _extraForce;
 
-    /// <summary>プレイヤーの接地判定</summary>
+    /// <summary>接地判定</summary>
     GroundCheck _groundCheck;
 
+    /// <summary>右手の攻撃判定用コライダー</summary>
+    [SerializeField, Header("右手の攻撃判定用コライダー")] Collider _rightHandCol;
+
+    /// <summary>左手の攻撃判定用コライダー</summary>
+    [SerializeField, Header("左手の攻撃判定用コライダー")] Collider _leftHandCol;
+
+    /// <summary>右足の攻撃判定用コライダー</summary>
+    [SerializeField, Header("右足の攻撃判定用コライダー")] Collider _rightFootCol;
+
+    /// <summary>左足の攻撃判定用コライダー</summary>
+    [SerializeField, Header("左足の攻撃判定用コライダー")] Collider _leftFootCol;
+
     /// <summary>通常時の速度</summary>
-    [SerializeField] float _normalSpeed = 1.2f;
+    [SerializeField, Header("通常時の移動速度")] float _normalSpeed = 1.2f;
 
     /// <summary>スプリント時の速度</summary>
-    [SerializeField] float _sprintSpeed = 4.0f;
+    [SerializeField, Header("スプリント時の移動速度")] float _sprintSpeed = 4.0f;
 
     /// <summary>ブリンクのクールタイム</summary>
-    [SerializeField] float _dashCoolTime = 0.5f;
+    [SerializeField, Header("ブリンクのクールタイム")] float _dashCoolTime = 0.5f;
 
     /// <summary>ブリンクの移動距離</summary>
-    [SerializeField] float _dashDistance = 15f;
+    [SerializeField, Header("ブリンクの移動距離")] float _dashDistance = 15f;
 
     private void Start()
     {

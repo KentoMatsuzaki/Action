@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         // 入力のログを出力する
-        Debug.Log("Move is Pressed.");
+        //Debug.Log("Move is Pressed.");
 
         // Moveアクションが押された場合
         if (context.performed) _moveControl.Move(context.ReadValue<Vector2>()); 
@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
     public void OnSprint(InputAction.CallbackContext context)
     {
         // 入力のログを出力する
-        Debug.Log("Sprint is Pressed.");
+        //Debug.Log("Sprint is Pressed.");
 
         // スプリントが押された場合
         if (context.performed) _moveControl.MoveSpeed = _sprintSpeed;
@@ -99,7 +99,7 @@ public class PlayerController : MonoBehaviour
     public void OnJump(InputAction.CallbackContext context)
     {
         // 入力のログを出力する
-        Debug.Log("Jump is Pressed.");
+        //Debug.Log("Jump is Pressed.");
 
         // ジャンプが押された場合
         if (context.performed) _jumpControl.Jump(true);
@@ -109,7 +109,7 @@ public class PlayerController : MonoBehaviour
     public void OnJumpStart()
     {
         // 呼び出しのログを出力する
-        Debug.Log("Jump Start is Called");
+        //Debug.Log("Jump Start is Called");
 
         // 現在のジャンプ回数と最大ジャンプ回数を比較してジャンプを切り替える
         _animator.Play
@@ -122,7 +122,7 @@ public class PlayerController : MonoBehaviour
     public void OnDash(InputAction.CallbackContext context)
     {
         // 入力のログを出力する
-        Debug.Log("Dash is Pressed.");
+        //Debug.Log("Dash is Pressed.");
 
         // ダッシュ可能ができる場合
         if (context.performed && _animator.GetBool("CanDash"))
@@ -141,7 +141,7 @@ public class PlayerController : MonoBehaviour
     public void OnAttack(InputAction.CallbackContext context)
     {
         // 入力のログを出力する
-        Debug.Log("Attack is Pressed.");
+        //Debug.Log("Attack is Pressed.");
 
         // 攻撃アクションが長押しされた場合
         if(context.interaction is HoldInteraction && context.performed)
@@ -152,7 +152,6 @@ public class PlayerController : MonoBehaviour
         // 攻撃アクションが短く押された場合
         else if(context.interaction is PressInteraction && context.performed)
         {
-            Debug.Log("Set Par");
             _animator.SetTrigger("Short Attack");
         }
     }

@@ -11,6 +11,12 @@ public class EnemyController : MonoBehaviour
     /// <summary>攻撃用コライダー</summary>
     [SerializeField] Collider _attackCol;
 
+    /// <summary>プレイヤー</summary>
+    [SerializeField] Transform _player;
+
+    /// <summary>索敵距離</summary>
+    [SerializeField] float _searchDistance;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -104,5 +110,15 @@ public class EnemyController : MonoBehaviour
     public void WaitForSecondsToRiseUp()
     {
         StartCoroutine(Wait(2f, () => _animator.SetTrigger("RiseUp")));
+    }
+
+    /// <summary>プレイヤーが近くにいるかどうかを返す</summary>
+    public bool IsPlayerClose()
+    {
+        // プレイヤーとの距離
+        float distance = Vector3.Distance(transform.position, _player.position);
+
+        // 索敵距離とプレイヤーとの距離を比較する
+        return _searchDistance >= distance ? true : false;
     }
 }

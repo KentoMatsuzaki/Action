@@ -2173,10 +2173,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1102250985}
-  - component: {fileID: 1102250984}
-  - component: {fileID: 1102250983}
   - component: {fileID: 1102250986}
+  - component: {fileID: 1102250983}
   - component: {fileID: 1102250987}
+  - component: {fileID: 1102250984}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -2220,6 +2220,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _attackCol: {fileID: 594013429}
+  _player: {fileID: 1949845268}
+  _searchDistance: 5
 --- !u!4 &1102250985
 Transform:
   m_ObjectHideFlags: 0

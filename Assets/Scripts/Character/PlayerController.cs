@@ -161,7 +161,8 @@ public class PlayerController : MonoBehaviour
         // 敵と接触した場合
         if(other.gameObject.tag == "Enemy")
         {
-
+            SetIsDamagedTrue();
+            Invoke(nameof(SetIsDamagedFalse), 0.1f);
         }
     }
 
@@ -175,6 +176,18 @@ public class PlayerController : MonoBehaviour
     void SetIsOnGround()
     {
         _animator.SetBool("IsOnGround", _groundCheck.IsOnGround ? true : false);
+    }
+
+    /// <summary>アニメーターの「IsDamaged」フラグをオンにする</summary>
+    public void SetIsDamagedTrue()
+    {
+        _animator.SetBool("IsDamaged", true);
+    }
+
+    /// <summary>アニメーターの「IsDamaged」フラグをオフにする</summary>
+    public void SetIsDamagedFalse()
+    {
+        _animator.SetBool("IsDamaged", false);
     }
 
     /// <summary>引数で指定した時間だけ待機してアクションを呼ぶ</summary>

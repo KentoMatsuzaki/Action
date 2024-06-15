@@ -87,6 +87,7 @@ public class EnemyController : MonoBehaviour
     {
         _animator.SetBool("IsDamaged", true);
     }
+
     /// <summary>アニメーターの「IsDamaged」フラグをオフにする</summary>
     public void SetIsDamagedFalse()
     {

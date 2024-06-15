@@ -14,6 +14,9 @@ public class EnemyController : MonoBehaviour
     /// <summary>プレイヤー</summary>
     [SerializeField] Transform _player;
 
+    /// <summary>体力</summary>
+    [SerializeField] int _hp = 100;
+
     /// <summary>索敵距離</summary>
     [SerializeField] float _searchDistance;
 
@@ -33,6 +36,7 @@ public class EnemyController : MonoBehaviour
             {
                 _animator.Play("Get Down");
                 SetIsDamagedTrue();
+                
             }
             // ダメージを受けている最中ではない場合
             else if(_animator.GetBool("IsDamaged") == false)
@@ -49,12 +53,7 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    /// <summary>攻撃可能かどうかを返す</summary>
-    /// <returns>ダメージを受けている：false ダメージを受けていない：true</returns>
-    public bool CanAttack()
-    {
-        return _animator.GetBool("IsDamaged") ? false : true;
-    }
+    /// <summary>攻撃の開始処理</summary>
 
     public void Attack()
     {
@@ -64,6 +63,13 @@ public class EnemyController : MonoBehaviour
             // 攻撃トリガーをオン
             _animator.Play("Attack");
         }
+    }
+
+    /// <summary>攻撃可能かどうかを返す</summary>
+    /// <returns>ダメージを受けている：false ダメージを受けていない：true</returns>
+    public bool CanAttack()
+    {
+        return _animator.GetBool("IsDamaged") ? false : true;
     }
 
     /// <summary>攻撃の衝撃イベント</summary>
@@ -120,5 +126,10 @@ public class EnemyController : MonoBehaviour
 
         // 索敵距離とプレイヤーとの距離を比較する
         return _searchDistance >= distance ? true : false;
+    }
+
+    public void MoveTowardPlayer()
+    {
+        Vector3.MoveTowards(transform.position, _player.position, 2f * Time.deltaTime);
     }
 }

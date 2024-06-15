@@ -13,6 +13,20 @@ public class EnemyController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        _animator.SetTrigger("Get Hit");
+        // プレイヤーと接触し、ダメージを受けている最中ではない場合
+        if (other.gameObject.tag == "Player" && _animator.GetBool("IsDamaged") == false)
+        {
+            Debug.Log("a");
+            SetIsDamagedTrue();
+        }
+    }
+
+    public void SetIsDamagedTrue()
+    {
+        _animator.SetBool("IsDamaged", true);
+    }
+    public void SetIsDamagedFalse()
+    {
+        _animator.SetBool("IsDamaged", false);
     }
 }

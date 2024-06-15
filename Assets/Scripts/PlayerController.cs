@@ -180,7 +180,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>右手のコライダーを有効化</summary>
     public void EnableRightHandCol()
     {
-        Debug.Log("RightHandCol Enabled.");
+        //Debug.Log("RightHandCol Enabled.");
         _rightHandCol.enabled = true;
         Invoke(nameof(DisableRightHandCol), 0.1f);
     }
@@ -188,14 +188,14 @@ public class PlayerController : MonoBehaviour
     /// <summary>右手のコライダーを無効化</summary>
     public void DisableRightHandCol()
     {
-        Debug.Log("RightHandCol Disabled.");
+        //Debug.Log("RightHandCol Disabled.");
         _rightHandCol.enabled = false;
     }
 
     /// <summary>左手のコライダーを有効化</summary>
     public void EnableLeftHandCol()
     {
-        Debug.Log("LeftHandCol Enabled.");
+        //Debug.Log("LeftHandCol Enabled.");
         _leftHandCol.enabled = true;
         Invoke(nameof(DisableLeftHandCol), 0.1f);
     }
@@ -204,14 +204,14 @@ public class PlayerController : MonoBehaviour
 
     public void DisableLeftHandCol()
     {
-        Debug.Log("LeftHandCol Disabled.");
+        //Debug.Log("LeftHandCol Disabled.");
         _leftHandCol.enabled= false;
     }
 
     /// <summary>右足のコライダーを有効化</summary>
     public void EnableRightFootCol()
     {
-        Debug.Log("RightFootCol Enabled.");
+        //Debug.Log("RightFootCol Enabled.");
         _rightFootCol.enabled = true;
         Invoke(nameof(DisableRightFootCol), 0.1f);
     }
@@ -219,14 +219,14 @@ public class PlayerController : MonoBehaviour
     /// <summary>右足のコライダーを無効化</summary>
     public void DisableRightFootCol()
     {
-        Debug.Log("RightFootCol Disabled.");
+        //Debug.Log("RightFootCol Disabled.");
         _rightFootCol.enabled = false;
     }
 
     /// <summary>左足のコライダーを有効化</summary>
     public void EnableLeftFootCol()
     {
-        Debug.Log("LeftFootCol Enabled.");
+        //Debug.Log("LeftFootCol Enabled.");
         _leftFootCol.enabled = true;
         Invoke(nameof(DisableLeftFootCol), 0.1f);
     }
@@ -234,7 +234,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>左足のコライダーを無効化</summary>
     public void DisableLeftFootCol()
     {
-        Debug.Log("LeftFootCol Disabled.");
+        //Debug.Log("LeftFootCol Disabled.");
         _leftFootCol.enabled= false;
     }
 }

@@ -2157,7 +2157,7 @@ GameObject:
   - component: {fileID: 1102250987}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2313,6 +2313,22 @@ PrefabInstance:
     - target: {fileID: 7269189869021432439, guid: df4b716990baa80499a4641dbb1c1258, type: 3}
       propertyPath: m_Name
       value: Biomech_Mutant_Skin_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7269189869021432725, guid: df4b716990baa80499a4641dbb1c1258, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7269189869021432727, guid: df4b716990baa80499a4641dbb1c1258, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7269189869021432797, guid: df4b716990baa80499a4641dbb1c1258, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7269189869021432799, guid: df4b716990baa80499a4641dbb1c1258, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2534,7 +2550,7 @@ GameObject:
   - component: {fileID: 1949845269}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

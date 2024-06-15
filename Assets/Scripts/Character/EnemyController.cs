@@ -14,6 +14,7 @@ public class EnemyController : MonoBehaviour
     private void Start()
     {
         _animator = GetComponent<Animator>();
+        Attack();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -42,14 +43,21 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    //public bool CanAttack()
-    //{
-
-    //}
+    /// <summary>攻撃可能かどうかを返す</summary>
+    /// <returns>ダメージを受けている：false ダメージを受けていない：true</returns>
+    public bool CanAttack()
+    {
+        return _animator.GetBool("IsDamaged") ? false : true;
+    }
 
     public void Attack()
     {
-        
+        // 攻撃可能な場合
+        if(CanAttack())
+        {
+            // 攻撃トリガーをオン
+            _animator.Play("Attack");
+        }
     }
 
     /// <summary>攻撃の衝撃イベント</summary>

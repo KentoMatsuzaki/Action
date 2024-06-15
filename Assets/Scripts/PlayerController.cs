@@ -168,12 +168,12 @@ public class PlayerController : MonoBehaviour
         _animator.SetBool("IsOnGround", _groundCheck.IsOnGround ? true : false);
     }
 
-    /// <summary>クールタイム用のコルーチン</summary>
-    /// <param name="time">待ち時間</param>
-    /// <param name="action">待機後に実行する処理</param>
-    IEnumerator Wait(float time, Action action)
+    /// <summary>引数で指定した時間だけ待機してアクションを呼ぶ</summary>
+    /// <param name="waitTime">待ち時間</param>
+    /// <param name="action">待機後に実行するアクション</param>
+    IEnumerator Wait(float waitTime, Action action)
     {
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSeconds(waitTime);
         action?.Invoke();
     }
 

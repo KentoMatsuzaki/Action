@@ -31,30 +31,92 @@ public class EnemyController : MonoBehaviour
         // プレイヤーと接触した場合
         if (other.gameObject.tag == "Player")
         {
-            // 連続で4回の攻撃を受けている場合
-            if(_animator.GetInteger("HitCount") == 4)
+            // 被ダメージ処理＋死亡判定
+            GetDamaged(other);
+
+            // ダウンする場合
+            if(IsDown())
             {
                 _animator.Play("Get Down");
                 SetIsDamagedTrue();
-                
+                // アニメーションイベントでFalseにする
             }
-            // ダメージを受けている最中ではない場合
-            else if(_animator.GetBool("IsDamaged") == false)
+            // 攻撃を受けていない場合
+            if(!_animator.GetBool("IsDamaged"))
             {
                 // ダメージフラグをオンにする
                 SetIsDamagedTrue();
 
-                // 0.1f後にダメージフラグをオフにする
+                // ダメージフラグをオフにする
                 Invoke(nameof(SetIsDamagedFalse), 0.1f);
 
                 // ヒットカウントを1だけ増加させる
-                _animator.SetInteger("HitCount", (_animator.GetInteger("HitCount") + 1));
+                AddHitCountByOne();
             }
         }
     }
 
-    /// <summary>攻撃の開始処理</summary>
+    
 
+    /// <summary>被ダメージ処理</summary>
+    void GetDamaged(Collider other)
+    {
+        // 被ダメージ量
+        int damage = other.GetComponent<AttackData>().GetAttackDamage();
+        
+        // 体力を更新する
+        SetHP(damage);
+
+        // 死亡判定
+        if(IsDied()) _animator.SetTrigger("IsDied");
+    }
+
+    /// <summary>体力を更新する</summary>
+    /// <param name="damage">被ダメージ量</param>
+    void SetHP(int damage)
+    {
+        // 体力を被ダメージ量だけ減らす
+        _hp -= damage;
+    }
+
+    /// <summary>死亡しているかどうか</summary>
+    bool IsDied()
+    {
+        return _hp <= 0 ? true : false;
+    }
+
+    /// <summary>ダウンするかどうか</summary>
+    bool IsDown()
+    {
+        // 攻撃を4回連続で受けているかどうか
+        return _animator.GetInteger("HitCount") == 4 ? true : false;
+    }
+
+    /// <summary>アニメーターの「IsDamaged」フラグをオンにする</summary>
+    public void SetIsDamagedTrue()
+    {
+        _animator.SetBool("IsDamaged", true);
+    }
+
+    /// <summary>アニメーターの「IsDamaged」フラグをオフにする</summary>
+    public void SetIsDamagedFalse()
+    {
+        _animator.SetBool("IsDamaged", false);
+    }
+
+    /// <summary>ヒットカウントを1増加させる</summary>
+    void AddHitCountByOne()
+    {
+        _animator.SetInteger("HitCount", (_animator.GetInteger("HitCount") + 1));
+    }
+
+    /// <summary>ヒットカウントを0に設定する</summary>
+    public void ResetHitCount()
+    {
+        _animator.SetInteger("HitCount", 0);
+    }
+
+    /// <summary>攻撃の開始処理</summary>
     public void Attack()
     {
         // 攻撃可能な場合
@@ -92,24 +154,6 @@ public class EnemyController : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         action?.Invoke();
-    }
-
-    /// <summary>アニメーターの「IsDamaged」フラグをオンにする</summary>
-    public void SetIsDamagedTrue()
-    {
-        _animator.SetBool("IsDamaged", true);
-    }
-
-    /// <summary>アニメーターの「IsDamaged」フラグをオフにする</summary>
-    public void SetIsDamagedFalse()
-    {
-        _animator.SetBool("IsDamaged", false);
-    }
-
-    /// <summary>アニメーターのヒットカウントを0で初期化する</summary>
-    public void ResetHitCount()
-    {
-        _animator.SetInteger("HitCount", 0);
     }
 
     /// <summary>2f待機してから起き上がりアニメーションを再生する</summary>

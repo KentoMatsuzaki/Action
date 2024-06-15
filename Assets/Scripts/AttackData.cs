@@ -6,13 +6,24 @@ public class AttackData : MonoBehaviour
     /// <summary>攻撃ダメージ</summary>
     [SerializeField] private int _attackDamage;
 
-    public int AttackDamage
+    /// <summary>攻撃力を取得する</summary>
+    public int GetAttackDamage()
     {
-        get => _attackDamage;
-        set
+        return _attackDamage;
+    }
+
+    /// <summary>攻撃力を設定する</summary>
+    /// <param name="damage">新しい攻撃力</param>
+    public void SetAttackDamage(int damage)
+    {
+        // 攻撃力がマイナスの場合は抜ける
+        if (damage < 0)
         {
-            if (value < 0) return;
-            else _attackDamage = value;
+            Debug.Log("Warning : Attack Damage must be positive number.");
+            return;
         }
+
+        // 攻撃力を更新
+        else _attackDamage = damage;
     }
 }

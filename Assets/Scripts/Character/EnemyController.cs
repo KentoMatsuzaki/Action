@@ -64,6 +64,7 @@ public class EnemyController : MonoBehaviour
     public void AttackImpactEvent()
     {
         _attackCol.enabled = true;
+        Invoke(nameof(AttackEndEvent), 0.1f);
     }
 
     /// <summary>攻撃の終了イベント</summary>

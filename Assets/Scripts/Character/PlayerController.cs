@@ -156,6 +156,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        // 敵と接触した場合
+        if(other.gameObject.tag == "Enemy")
+        {
+
+        }
+    }
+
     /// <summary>アニメーターの「Speed」パラメーターを更新する</summary>
     void SetSpeed()
     {

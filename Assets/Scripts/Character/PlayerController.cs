@@ -37,6 +37,9 @@ public class PlayerController : MonoBehaviour
     /// <summary>左足の攻撃判定用コライダー</summary>
     [SerializeField, Header("左足の攻撃判定用コライダー")] Collider _leftFootCol;
 
+    /// <summary>攻撃エフェクト</summary>
+    [SerializeField] ParticleSystem _attackEffect;
+
     /// <summary>通常時の速度</summary>
     [SerializeField, Header("通常時の移動速度")] float _normalSpeed = 1.2f;
 
@@ -179,13 +182,13 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>アニメーターの「IsDamaged」フラグをオンにする</summary>
-    public void SetIsDamagedTrue()
+    void SetIsDamagedTrue()
     {
         _animator.SetBool("IsDamaged", true);
     }
 
     /// <summary>アニメーターの「IsDamaged」フラグをオフにする</summary>
-    public void SetIsDamagedFalse()
+    void SetIsDamagedFalse()
     {
         _animator.SetBool("IsDamaged", false);
     }
@@ -200,6 +203,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>右手のコライダーを有効化</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
     public void EnableRightHandCol()
     {
         //Debug.Log("RightHandCol Enabled.");
@@ -208,6 +212,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>右手のコライダーを無効化</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
     public void DisableRightHandCol()
     {
         //Debug.Log("RightHandCol Disabled.");
@@ -215,6 +220,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>左手のコライダーを有効化</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
     public void EnableLeftHandCol()
     {
         //Debug.Log("LeftHandCol Enabled.");
@@ -223,6 +229,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>左手のコライダーを無効化</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
 
     public void DisableLeftHandCol()
     {
@@ -231,6 +238,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>右足のコライダーを有効化</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
     public void EnableRightFootCol()
     {
         //Debug.Log("RightFootCol Enabled.");
@@ -239,6 +247,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>右足のコライダーを無効化</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
     public void DisableRightFootCol()
     {
         //Debug.Log("RightFootCol Disabled.");
@@ -246,6 +255,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>左足のコライダーを有効化</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
     public void EnableLeftFootCol()
     {
         //Debug.Log("LeftFootCol Enabled.");
@@ -254,6 +264,7 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>左足のコライダーを無効化</summary>
+    /// <summary>アニメーションイベントから呼ばれる</summary>
     public void DisableLeftFootCol()
     {
         //Debug.Log("LeftFootCol Disabled.");

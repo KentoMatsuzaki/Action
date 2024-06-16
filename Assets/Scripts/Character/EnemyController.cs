@@ -119,7 +119,7 @@ public class EnemyController : MonoBehaviour
     /// <summary>待機してからアクションを実行する</summary>
     /// <param name="waitTime">待機時間</param>
     /// <param name="action">アクション</param>
-    IEnumerator Wait(float waitTime, Action action)
+    IEnumerator WaitThenCallAction(float waitTime, Action action)
     {
         yield return new WaitForSeconds(waitTime);
         action?.Invoke();
@@ -128,7 +128,7 @@ public class EnemyController : MonoBehaviour
     /// <summary>起き上がり状態に遷移する</summary>
     public void WaitForSecondsToRiseUp()
     {
-        StartCoroutine(Wait(2f, () => _animator.SetTrigger("RiseUp")));
+        StartCoroutine(WaitThenCallAction(2f, () => _animator.SetTrigger("RiseUp")));
     }
 
     /// <summary>プレイヤーが近くにいるかどうか</summary>

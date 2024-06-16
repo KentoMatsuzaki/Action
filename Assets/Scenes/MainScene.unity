@@ -2003,7 +2003,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attackEffects:
   - {fileID: 5129188071419600241, guid: ee33c63c8086ef34983b4f48f75d8bbe, type: 3}
-  _damageEffects: []
+  _damageEffects:
+  - {fileID: 8304174628890207604, guid: 11633db86f7110d4bbd5091a2c25db3b, type: 3}
   _deadEffects: []
   _effectParent: {fileID: 920548647}
 --- !u!1 &963194225

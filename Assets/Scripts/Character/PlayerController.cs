@@ -59,96 +59,77 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        // スピードを更新
+        // スピードを更新する
         SetSpeed();
         
-        // 接地判定を更新
+        // 接地判定を更新する
         SetIsOnGround();
     }
 
-    /// <summary>PlayerInputから呼ばれるイベント</summary>
-    /// <param name="context">ボタン入力時に呼び出されるコールバック</param>
+    /// <summary>移動の物理演算を行う</summary>
+    /// <summary>PlayerInputから呼ばれる</summary>
     public void OnMove(InputAction.CallbackContext context)
     {
-        // 入力のログを出力する
-        //Debug.Log("Move is Pressed.");
-
-        // Moveアクションが押された場合
+        // Moveアクションが入力された場合
         if (context.performed) _moveControl.Move(context.ReadValue<Vector2>()); 
 
         // Moveアクションがリリースされた場合
         else if (context.canceled) _moveControl.Move(Vector2.zero);
     }
 
-    /// <summary>PlayerInputから呼ばれるイベント</summary>
-    /// <param name="context">ボタン入力時に呼び出されるコールバック</param>
+    /// <summary>移動速度の更新を行う（アニメーションは速度に応じて自動で変更される）</summary>
+    /// <summary>PlayerInputから呼ばれる</summary>
     public void OnSprint(InputAction.CallbackContext context)
     {
-        // 入力のログを出力する
-        //Debug.Log("Sprint is Pressed.");
-
-        // スプリントが押された場合
+        // スプリントが入力された場合
         if (context.performed) _moveControl.MoveSpeed = _sprintSpeed;
 
         // スプリントがリリースされた場合
         else if (context.canceled) _moveControl.MoveSpeed = _normalSpeed;
     }
 
-    /// <summary>PlayerInputから呼ばれるイベント</summary>
-    /// <param name="context">ボタン入力時に呼び出されるコールバック</param>
+    /// <summary>ジャンプの物理演算を行う</summary>
+    /// <summary>PlayerInputから呼ばれる</summary>
     public void OnJump(InputAction.CallbackContext context)
     {
-        // 入力のログを出力する
-        //Debug.Log("Jump is Pressed.");
-
-        // ジャンプが押された場合
+        // ジャンプが入力された場合
         if (context.performed) _jumpControl.Jump(true);
     }
 
-    /// <summary>JumpControlから呼ばれるコールバック</summary>
+    /// <summary>ジャンプのアニメーション再生を行う</summary>
+    /// <summary>JumpControlから呼ばれる</summary>
     public void OnJumpStart()
     {
-        // 呼び出しのログを出力する
-        //Debug.Log("Jump Start is Called");
-
         // 現在のジャンプ回数と最大ジャンプ回数を比較してジャンプを切り替える
         _animator.Play
             (_jumpControl.AerialJumpCount >= _jumpControl.MaxAerialJumpCount ? 
                 "Double Jump" : "Jump Up");
     }
 
-    /// <summary>PlayerInputから呼ばれるイベント</summary>
-    /// <param name="context">ボタン入力時に呼び出されるコールバック</param>
+    /// <summary>ダッシュの物理演算とアニメーション再生を行う</summary>
+    /// <summary>PlayerInputから呼ばれる</summary>
     public void OnDash(InputAction.CallbackContext context)
     {
-        // 入力のログを出力する
-        //Debug.Log("Dash is Pressed.");
-
-        // ダッシュ可能ができる場合
+        // ダッシュが入力された場合
         if (context.performed && _animator.GetBool("CanDash"))
         {
             _animator.SetBool("CanDash", false);
             _extraForce.AddForce(transform.forward * _dashDistance);
             _animator.Play("Dash Start");
-            StartCoroutine(Wait(_dashCoolTime,
+            StartCoroutine(WaitThenCallAction(_dashCoolTime,
                 () => _animator.SetBool("CanDash", true)));
         }
     }
 
-
-    /// <summary>PlayerInputから呼ばれるイベント</summary>
-    /// <param name="context">ボタン入力時に呼び出されるコールバック</param>
+    /// <summary>攻撃のアニメーション遷移を行う</summary>
+    /// <summary>PlayerInputから呼ばれる</summary>
     public void OnAttack(InputAction.CallbackContext context)
     {
-        // 入力のログを出力する
-        //Debug.Log("Attack is Pressed.");
-
         // 攻撃アクションが長押しされた場合
         if(context.interaction is HoldInteraction && context.performed)
         {
             _animator.SetTrigger("Long Attack");
         }
-
         // 攻撃アクションが短く押された場合
         else if(context.interaction is PressInteraction && context.performed)
         {
@@ -159,10 +140,14 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // 敵と接触した場合
-        if(other.gameObject.tag == "Enemy")
+        if (other.gameObject.tag == "Enemy")
         {
             SetIsDamagedTrue();
             Invoke(nameof(SetIsDamagedFalse), 0.1f);
+
+            var hitCol = GetComponent<Collider>();
+            var hitPos = hitCol.ClosestPointOnBounds(other.transform.position);
+            PlayDamageEffect(hitPos, 0);
         }
     }
 
@@ -193,7 +178,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>引数で指定した時間だけ待機してアクションを呼ぶ</summary>
     /// <param name="waitTime">待ち時間</param>
     /// <param name="action">待機後に実行するアクション</param>
-    IEnumerator Wait(float waitTime, Action action)
+    IEnumerator WaitThenCallAction(float waitTime, Action action)
     {
         yield return new WaitForSeconds(waitTime);
         action?.Invoke();
@@ -206,7 +191,7 @@ public class PlayerController : MonoBehaviour
         //Debug.Log("RightHandCol Enabled.");
         _rightHandCol.enabled = true;
         Invoke(nameof(DisableRightHandCol), 0.1f);
-        PlayAttackEffect(_rightHandCol.gameObject.transform.position, 0);
+        PlayAttackEffect(_rightHandCol.transform.position, 0);
     }
 
     /// <summary>右手のコライダーを無効化</summary>
@@ -224,7 +209,7 @@ public class PlayerController : MonoBehaviour
         //Debug.Log("LeftHandCol Enabled.");
         _leftHandCol.enabled = true;
         Invoke(nameof(DisableLeftHandCol), 0.1f);
-        PlayAttackEffect(_leftHandCol.gameObject.transform.position, 0);
+        PlayAttackEffect(_leftHandCol.transform.position, 0);
     }
 
     /// <summary>左手のコライダーを無効化</summary>
@@ -243,7 +228,7 @@ public class PlayerController : MonoBehaviour
         //Debug.Log("RightFootCol Enabled.");
         _rightFootCol.enabled = true;
         Invoke(nameof(DisableRightFootCol), 0.1f);
-        PlayAttackEffect(_rightFootCol.gameObject.transform.position, 0);
+        PlayAttackEffect(_rightFootCol.transform.position, 0);
     }
 
     /// <summary>右足のコライダーを無効化</summary>
@@ -261,7 +246,7 @@ public class PlayerController : MonoBehaviour
         //Debug.Log("LeftFootCol Enabled.");
         _leftFootCol.enabled = true;
         Invoke(nameof(DisableLeftFootCol), 0.1f);
-        PlayAttackEffect(_leftFootCol.gameObject.transform.position, 0);
+        PlayAttackEffect(_leftFootCol.transform.position, 0);
     }
 
     /// <summary>左足のコライダーを無効化</summary>

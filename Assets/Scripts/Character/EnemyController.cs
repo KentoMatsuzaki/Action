@@ -68,7 +68,7 @@ public class EnemyController : MonoBehaviour
         SetHP(damage);
 
         // €–S”»’è
-        if(IsDied()) _animator.SetTrigger("IsDied");
+        if(IsDied()) _animator.Play("Died");
     }
 
     /// <summary>‘Ì—Í‚ğXV‚·‚é</summary>

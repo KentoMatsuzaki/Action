@@ -29,20 +29,26 @@ public class EnemyController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // プレイヤーと接触した場合
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player" && !_animator.GetBool("IsDamaged"))
         {
-            // 被ダメージ処理＋死亡判定
-            GetDamaged(other);
+            // 被ダメージ処理
+            GetDamage(other);
 
-            // ダウンする場合
-            if(IsDown())
+            // 死亡状態に遷移して処理を抜ける
+            if (IsDied())
+            {
+                _animator.Play("Died");
+                return;
+            }
+            // ダウン状態に遷移する
+            else if (IsReadyForDown())
             {
                 _animator.Play("Get Down");
+                // ダメージフラグをオンにする
                 SetIsDamagedTrue();
-                // アニメーションイベントでFalseにする
             }
-            // 攻撃を受けていない場合
-            if(!_animator.GetBool("IsDamaged"))
+            // やられ状態に遷移する
+            else
             {
                 // ダメージフラグをオンにする
                 SetIsDamagedTrue();
@@ -59,82 +65,48 @@ public class EnemyController : MonoBehaviour
     
 
     /// <summary>被ダメージ処理</summary>
-    void GetDamaged(Collider other)
+    void GetDamage(Collider other)
     {
         // 被ダメージ量
         int damage = other.GetComponent<AttackData>().GetAttackDamage();
         
         // 体力を更新する
-        SetHP(damage);
-
-        // 死亡判定
-        if(IsDied()) _animator.Play("Died");
+        if(_hp > 0) DecreaseHP(damage);
     }
 
-    /// <summary>体力を更新する</summary>
+    /// <summary>受けたダメージ分だけ体力を減少させる</summary>
     /// <param name="damage">被ダメージ量</param>
-    void SetHP(int damage)
-    {
-        // 体力を被ダメージ量だけ減らす
-        _hp -= damage;
-    }
+    void DecreaseHP(int damage) => _hp -= damage;
 
-    /// <summary>死亡しているかどうか</summary>
-    bool IsDied()
-    {
-        return _hp <= 0 ? true : false;
-    }
+    /// <summary>死亡しているか</summary>
+    bool IsDied() => _hp <= 0 ? true : false;
 
-    /// <summary>ダウンするかどうか</summary>
-    bool IsDown()
-    {
-        // 攻撃を4回連続で受けているかどうか
-        return _animator.GetInteger("HitCount") == 4 ? true : false;
-    }
+    /// <summary>次の攻撃を受けてダウンするか</summary>
+    bool IsReadyForDown() => _animator.GetInteger("HitCount") == 4 ? true : false;
 
     /// <summary>アニメーターの「IsDamaged」フラグをオンにする</summary>
-    public void SetIsDamagedTrue()
-    {
-        _animator.SetBool("IsDamaged", true);
-    }
+    public void SetIsDamagedTrue() => _animator.SetBool("IsDamaged", true);
 
     /// <summary>アニメーターの「IsDamaged」フラグをオフにする</summary>
-    public void SetIsDamagedFalse()
-    {
-        _animator.SetBool("IsDamaged", false);
-    }
+    public void SetIsDamagedFalse() => _animator.SetBool("IsDamaged", false);
 
     /// <summary>ヒットカウントを1増加させる</summary>
-    void AddHitCountByOne()
-    {
-        _animator.SetInteger("HitCount", (_animator.GetInteger("HitCount") + 1));
-    }
+    void AddHitCountByOne() => _animator.SetInteger("HitCount", (_animator.GetInteger("HitCount") + 1));
 
     /// <summary>ヒットカウントを0に設定する</summary>
-    public void ResetHitCount()
-    {
-        _animator.SetInteger("HitCount", 0);
-    }
+    public void ResetHitCount() => _animator.SetInteger("HitCount", 0);
 
-    /// <summary>攻撃の開始処理</summary>
+    /// <summary>攻撃状態に遷移する</summary>
     public void Attack()
     {
-        // 攻撃可能な場合
-        if(CanAttack())
-        {
-            // 攻撃トリガーをオン
-            _animator.Play("Attack");
-        }
+        if(CanAttack()) _animator.Play("Attack");
     }
 
-    /// <summary>攻撃可能かどうかを返す</summary>
-    /// <returns>ダメージを受けている：false ダメージを受けていない：true</returns>
-    public bool CanAttack()
-    {
-        return _animator.GetBool("IsDamaged") ? false : true;
-    }
+    /// <summary>攻撃可能かどうか</summary>
+    /// <returns>攻撃を受けていない：true / 攻撃を受けている：false</returns>
+    public bool CanAttack() => _animator.GetBool("IsDamaged") ? false : true;
 
-    /// <summary>攻撃の衝撃イベント</summary>
+    /// <summary>攻撃の命中イベント</summary>
     public void AttackImpactEvent()
     {
         _attackCol.enabled = true;
@@ -142,27 +114,24 @@ public class EnemyController : MonoBehaviour
     }
 
     /// <summary>攻撃の終了イベント</summary>
-    public void AttackEndEvent()
-    {
-        _attackCol.enabled = false;
-    }
+    public void AttackEndEvent() => _attackCol.enabled = false;
 
-    /// <summary>引数で指定した時間だけ待機してアクションを呼ぶ</summary>
-    /// <param name="waitTime">待ち時間</param>
-    /// <param name="action">待機後に実行するアクション</param>
+    /// <summary>待機してからアクションを実行する</summary>
+    /// <param name="waitTime">待機時間</param>
+    /// <param name="action">アクション</param>
     IEnumerator Wait(float waitTime, Action action)
     {
         yield return new WaitForSeconds(waitTime);
         action?.Invoke();
     }
 
-    /// <summary>2f待機してから起き上がりアニメーションを再生する</summary>
+    /// <summary>起き上がり状態に遷移する</summary>
     public void WaitForSecondsToRiseUp()
     {
         StartCoroutine(Wait(2f, () => _animator.SetTrigger("RiseUp")));
     }
 
-    /// <summary>プレイヤーが近くにいるかどうかを返す</summary>
+    /// <summary>プレイヤーが近くにいるかどうか</summary>
     public bool IsPlayerClose()
     {
         // プレイヤーとの距離

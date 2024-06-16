@@ -37,9 +37,6 @@ public class PlayerController : MonoBehaviour
     /// <summary>左足の攻撃判定用コライダー</summary>
     [SerializeField, Header("左足の攻撃判定用コライダー")] Collider _leftFootCol;
 
-    /// <summary>攻撃エフェクト</summary>
-    [SerializeField] ParticleSystem _attackEffect;
-
     /// <summary>通常時の速度</summary>
     [SerializeField, Header("通常時の移動速度")] float _normalSpeed = 1.2f;
 
@@ -202,13 +199,14 @@ public class PlayerController : MonoBehaviour
         action?.Invoke();
     }
 
-    /// <summary>右手のコライダーを有効化</summary>
+    /// <summary>右手のコライダーを有効化し、攻撃エフェクトを表示する</summary>
     /// <summary>アニメーションイベントから呼ばれる</summary>
     public void EnableRightHandCol()
     {
         //Debug.Log("RightHandCol Enabled.");
         _rightHandCol.enabled = true;
         Invoke(nameof(DisableRightHandCol), 0.1f);
+        PlayAttackEffect(_rightHandCol.gameObject.transform.position, 0);
     }
 
     /// <summary>右手のコライダーを無効化</summary>
@@ -219,13 +217,14 @@ public class PlayerController : MonoBehaviour
         _rightHandCol.enabled = false;
     }
 
-    /// <summary>左手のコライダーを有効化</summary>
+    /// <summary>左手のコライダーを有効化し、攻撃エフェクトを表示する</summary>
     /// <summary>アニメーションイベントから呼ばれる</summary>
     public void EnableLeftHandCol()
     {
         //Debug.Log("LeftHandCol Enabled.");
         _leftHandCol.enabled = true;
         Invoke(nameof(DisableLeftHandCol), 0.1f);
+        PlayAttackEffect(_leftHandCol.gameObject.transform.position, 0);
     }
 
     /// <summary>左手のコライダーを無効化</summary>
@@ -237,13 +236,14 @@ public class PlayerController : MonoBehaviour
         _leftHandCol.enabled= false;
     }
 
-    /// <summary>右足のコライダーを有効化</summary>
+    /// <summary>右足のコライダーを有効化し、攻撃エフェクトを表示する</summary>
     /// <summary>アニメーションイベントから呼ばれる</summary>
     public void EnableRightFootCol()
     {
         //Debug.Log("RightFootCol Enabled.");
         _rightFootCol.enabled = true;
         Invoke(nameof(DisableRightFootCol), 0.1f);
+        PlayAttackEffect(_rightFootCol.gameObject.transform.position, 0);
     }
 
     /// <summary>右足のコライダーを無効化</summary>
@@ -254,13 +254,14 @@ public class PlayerController : MonoBehaviour
         _rightFootCol.enabled = false;
     }
 
-    /// <summary>左足のコライダーを有効化</summary>
+    /// <summary>左足のコライダーを有効化し、攻撃エフェクトを表示する</summary>
     /// <summary>アニメーションイベントから呼ばれる</summary>
     public void EnableLeftFootCol()
     {
         //Debug.Log("LeftFootCol Enabled.");
         _leftFootCol.enabled = true;
         Invoke(nameof(DisableLeftFootCol), 0.1f);
+        PlayAttackEffect(_leftFootCol.gameObject.transform.position, 0);
     }
 
     /// <summary>左足のコライダーを無効化</summary>
@@ -269,5 +270,29 @@ public class PlayerController : MonoBehaviour
     {
         //Debug.Log("LeftFootCol Disabled.");
         _leftFootCol.enabled= false;
+    }
+
+    /// <summary>座標を指定して攻撃エフェクトを表示する</summary>
+    /// <param name="pos">エフェクトを表示させる座標</param>
+    /// <param name="index">エフェクトのインデックス</param>
+    private void PlayAttackEffect(Vector3 pos, int index)
+    {
+        EffectController.Instance.PlayAttackEffect(pos, index);
+    }
+
+    /// <summary>座標を指定してダメージエフェクトを表示する</summary>
+    /// <param name="pos">エフェクトを表示させる座標</param>
+    /// <param name="index">エフェクトのインデックス</param>
+    private void PlayDamageEffect(Vector3 pos, int index)
+    {
+        EffectController.Instance.PlayDamageEffect(pos, index);
+    }
+
+    /// <summary>座標を指定して死亡エフェクトを表示する</summary>
+    /// <param name="pos">エフェクトを表示させる座標</param>
+    /// <param name="index">エフェクトのインデックス</param>
+    private void PlayDeadEffect(Vector3 pos, int index)
+    {
+        EffectController.Instance.PlayDeadEffect(pos, index);
     }
 }

@@ -1,11 +1,8 @@
 using UnityEngine;
 
 /// <summary>エフェクト制御</summary>
-public class EffectController : MonoBehaviour 
+public class EffectController : SingletonMonoBehaviour<EffectController>
 {
-    /// <summary>インスタンス</summary>
-    public static EffectController Instance { get; private set; }
-
     /// <summary>攻撃エフェクト</summary>
     [SerializeField] private ParticleSystem[] _attackEffects;
 
@@ -17,11 +14,6 @@ public class EffectController : MonoBehaviour
 
     /// <summary>エフェクトの親</summary>
     [SerializeField] private Transform _effectParent;
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     /// <summary>座標を指定して攻撃エフェクトを表示する</summary>
     /// <param name="pos">エフェクトを表示させる座標</param>

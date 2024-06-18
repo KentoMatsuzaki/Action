@@ -49,6 +49,9 @@ public class PlayerController : MonoBehaviour
     /// <summary>ブリンクの移動距離</summary>
     [SerializeField, Header("ブリンクの移動距離")] float _dashDistance = 15f;
 
+    /// <summary>サウンドマネージャー</summary>
+    CriSoundManager _soundManager;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -56,6 +59,7 @@ public class PlayerController : MonoBehaviour
         _groundCheck = GetComponent<GroundCheck>();
         _jumpControl = GetComponent<JumpControl>();
         _extraForce = GetComponent<ExtraForce>();
+        _soundManager = CriSoundManager.Instance;
     }
     private void Update()
     {
@@ -139,14 +143,17 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // 敵と接触した場合
-        if (other.gameObject.tag == "Enemy")
+        // 敵に攻撃された場合
+        if (other.gameObject.tag == "EnemyAttack")
         {
             SetIsDamagedTrue();
             Invoke(nameof(SetIsDamagedFalse), 0.1f);
 
-            var hitCol = GetComponent<Collider>();
-            var hitPos = hitCol.ClosestPointOnBounds(other.transform.position);
+            // 衝突位置を計算
+            var hitPos = GetComponent<Collider>().
+                ClosestPointOnBounds(other.transform.position);
+
+            // ダメージエフェクトを再生
             PlayDamageEffect(hitPos, 0);
         }
     }
@@ -279,5 +286,13 @@ public class PlayerController : MonoBehaviour
     private void PlayDeadEffect(Vector3 pos, int index)
     {
         EffectController.Instance.PlayDeadEffect(pos, index);
+    }
+
+    /// <summary>プレイヤーのSEを再生する</summary>
+    /// <param name="index">キューのインデックス</param>
+    private void PlayAttackSound(int index)
+    {
+        var cueName = _soundManager._playerCueNames[index];
+        CriSoundManager.Instance.Play("CueSheet_0", cueName, 0.5f);
     }
 }

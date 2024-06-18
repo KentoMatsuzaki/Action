@@ -28,8 +28,8 @@ public class EnemyController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // プレイヤーと接触した場合
-        if (other.gameObject.tag == "Player" && !_animator.GetBool("IsDamaged"))
+        // プレイヤーに攻撃された場合
+        if (other.gameObject.tag == "PlayerAttack" && !_animator.GetBool("IsDamaged"))
         {
             // 被ダメージ処理
             GetDamage(other);

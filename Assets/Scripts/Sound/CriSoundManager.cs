@@ -13,9 +13,13 @@ public class CriSoundManager : SingletonMonoBehaviour<CriSoundManager>
     [SerializeField,
         Header("キューシート名")] private List<string> _cueSheetName;
 
-    /// <summary>キュー名</summary>
+    /// <summary>プレイヤーのSE</summary>
     [SerializeField,
-        Header("キュー名")] private List<string> _cueName;
+        Header("キュー名")] public List<string> _playerCueNames;
+
+    /// <summary>ゾンビのSE</summary>
+    [SerializeField,
+        Header("キュー名")] public List<string> _zombieCueNames;
 
     /// <summary>プレイヤー</summary>
     private CriAtomExPlayer _player;
@@ -31,9 +35,7 @@ public class CriSoundManager : SingletonMonoBehaviour<CriSoundManager>
     }
 
     /// <summary>音声を再生してコレクションに登録する</summary>
-    /// <param name="cueSheetName">キューシート名</param>
-    /// <param name="cueName">キュー名</param>
-    /// <param name="volume">ボリューム</param>
+    /// <param name="cueName">コレクションのキー</param>
     public void Play(string cueSheetName, string cueName, float volume)
     {
         // プレイヤーを設定

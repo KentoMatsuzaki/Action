@@ -1479,7 +1479,7 @@ GameObject:
   - component: {fileID: 594013431}
   m_Layer: 0
   m_Name: Box002
-  m_TagString: Enemy
+  m_TagString: EnemyAttack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2299,10 +2299,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8aa264db6c81bb429436ac4607e0ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _volume: 0.519
+  _volume: 1
   _cueSheetName:
-  - 
-  _cueName: []
+  - CueSheet_0
+  _playerCueNames:
+  - "\u8EFD\u3044\u30AD\u30C3\u30AF"
+  - "\u91CD\u3044\u30AD\u30C3\u30AF"
+  - "\u7D20\u624B\u306B\u3088\u308B\u653B\u6483"
+  _zombieCueNames:
+  - "\u30BE\u30F3\u30D3\u653B\u6483"
+  - "\u30BE\u30F3\u30D3\u30C0\u30E1\u30FC\u30B8"
+  - "\u30BE\u30F3\u30D3\u6B7B\u4EA1"
 --- !u!1 &1050054857 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7269189869021432727, guid: df4b716990baa80499a4641dbb1c1258, type: 3}
@@ -2427,7 +2434,7 @@ GameObject:
   - component: {fileID: 1102250984}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2451,7 +2458,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.55
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
@@ -2590,19 +2597,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7269189869021432725, guid: df4b716990baa80499a4641dbb1c1258, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: PlayerAttack
       objectReference: {fileID: 0}
     - target: {fileID: 7269189869021432727, guid: df4b716990baa80499a4641dbb1c1258, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: PlayerAttack
       objectReference: {fileID: 0}
     - target: {fileID: 7269189869021432797, guid: df4b716990baa80499a4641dbb1c1258, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: PlayerAttack
       objectReference: {fileID: 0}
     - target: {fileID: 7269189869021432799, guid: df4b716990baa80499a4641dbb1c1258, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: PlayerAttack
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2837,7 +2844,7 @@ GameObject:
   - component: {fileID: 1949845269}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

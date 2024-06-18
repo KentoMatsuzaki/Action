@@ -1959,7 +1959,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _power: 10
-  _index: 0
+  _index: 1
   _volume: 1
 --- !u!1 &777731055
 GameObject:
@@ -2086,14 +2086,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 920548646}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 621049941ec4822489f0bd6aef1540e4, type: 3}
+  m_Script: {fileID: 11500000, guid: 34d71033e83257844bad53f16de9738b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _attackEffects:
   - {fileID: 5129188071419600241, guid: ee33c63c8086ef34983b4f48f75d8bbe, type: 3}
   _damageEffects:
   - {fileID: 8304174628890207604, guid: 11633db86f7110d4bbd5091a2c25db3b, type: 3}
-  _deadEffects: []
   _effectParent: {fileID: 920548647}
 --- !u!1 &963194225
 GameObject:
@@ -2357,7 +2356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _power: 10
-  _index: 0
+  _index: 1
   _volume: 1
 --- !u!1 &1050191686
 GameObject:
@@ -3164,10 +3163,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72f0f96c8cb65394da66fb1614502d2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rightHandCol: {fileID: 1050054859}
-  _leftHandCol: {fileID: 777506276}
-  _rightFootCol: {fileID: 979199743}
-  _leftFootCol: {fileID: 1069066520}
+  _cols:
+  - {fileID: 1050054859}
+  - {fileID: 777506276}
+  - {fileID: 979199743}
+  - {fileID: 1069066520}
   _normalSpeed: 1.2
   _sprintSpeed: 7.5
   _dashCoolTime: 0.5

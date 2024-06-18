@@ -60,14 +60,33 @@ public class PlayerController : MonoBehaviour
         _passiveCol = GetComponent<Collider>();
         _effect = EffectManager.Instance;
     }
+
     private void Update()
     {
-        // スピードを更新する
+        // 移動速度を更新する
         SetSpeed();
         
         // 接地判定を更新する
         SetIsOnGround();
     }
+
+    //-------------------------------------------------------------------------------
+    // Update()内で呼ばれる処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>移動速度を設定</summary>
+    private void SetSpeed() => _animator.SetFloat("Speed", _moveControl.CurrentSpeed);
+
+    /// <summary>接地判定を取得</summary>
+    private bool GetIsOnGround() => _groundCheck.IsOnGround ? true : false;
+
+    /// <summary>接地判定を設定</summary>
+    private void SetIsOnGround() =>
+        _animator.SetBool("IsOnGround", GetIsOnGround() ? true : false);
+
+    //-------------------------------------------------------------------------------
+    // 移動のコールバックイベント
+    //-------------------------------------------------------------------------------
 
     /// <summary>移動の物理演算を行う</summary>
     /// <summary>PlayerInputから呼ばれる</summary>
@@ -80,110 +99,144 @@ public class PlayerController : MonoBehaviour
         else if (context.canceled) _moveControl.Move(Vector2.zero);
     }
 
+    //-------------------------------------------------------------------------------
+    // スプリントのコールバックイベント
+    //-------------------------------------------------------------------------------
+
     /// <summary>移動速度の更新を行う（アニメーションは速度に応じて自動で変更される）</summary>
     /// <summary>PlayerInputから呼ばれる</summary>
     public void OnSprint(InputAction.CallbackContext context)
     {
         // スプリントが入力された場合
-        if (context.performed) _moveControl.MoveSpeed = _sprintSpeed;
+        if (context.performed) SetMoveSpeed(_sprintSpeed);
 
         // スプリントがリリースされた場合
-        else if (context.canceled) _moveControl.MoveSpeed = _normalSpeed;
+        else if (context.canceled) SetMoveSpeed(_normalSpeed);
     }
+
+    //-------------------------------------------------------------------------------
+    // スプリントに関する処理
+    //-------------------------------------------------------------------------------
+
+    private void SetMoveSpeed(float speed) => _moveControl.MoveSpeed = speed;
+
+    //-------------------------------------------------------------------------------
+    // ジャンプのコールバックイベント
+    //-------------------------------------------------------------------------------
 
     /// <summary>ジャンプの物理演算を行う</summary>
     /// <summary>PlayerInputから呼ばれる</summary>
     public void OnJump(InputAction.CallbackContext context)
     {
         // ジャンプが入力された場合
-        if (context.performed) _jumpControl.Jump(true);
+        if (context.performed) Jump();
     }
 
     /// <summary>ジャンプのアニメーション再生を行う</summary>
     /// <summary>JumpControlから呼ばれる</summary>
-    public void OnJumpStart()
-    {
-        // 現在のジャンプ回数と最大ジャンプ回数を比較してジャンプを切り替える
-        _animator.Play
-            (_jumpControl.AerialJumpCount >= _jumpControl.MaxAerialJumpCount ? 
-                "Double Jump" : "Jump Up");
-    }
+    public void OnJumpStart() => PlayJumpAnimation();
+
+    //-------------------------------------------------------------------------------
+    // ジャンプに関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>物理演算</summary>
+    private void Jump() => _jumpControl.Jump(true);
+
+    /// <summary>1回目のジャンプを終えているか</summary>
+    private bool CanJumpOneMore() => 
+        _jumpControl.MaxAerialJumpCount <= _jumpControl.AerialJumpCount ? true : false;
+
+    /// <summary>アニメーションを再生する</summary>
+    private void PlayJumpAnimation() => 
+        _animator.Play(CanJumpOneMore() ? "Double Jump" : "Jump Up");
+
+    //-------------------------------------------------------------------------------
+    // ダッシュのコールバックイベント
+    //-------------------------------------------------------------------------------
 
     /// <summary>ダッシュの物理演算とアニメーション再生を行う</summary>
     /// <summary>PlayerInputから呼ばれる</summary>
     public void OnDash(InputAction.CallbackContext context)
     {
         // ダッシュが入力された場合
-        if (context.performed && _animator.GetBool("CanDash"))
+        if (context.performed && GetCanDash())
         {
-            _animator.SetBool("CanDash", false);
-            _extraForce.AddForce(transform.forward * _dashDistance);
-            _animator.Play("Dash Start");
-            StartCoroutine(WaitThenCallAction(_dashCoolTime,
-                () => _animator.SetBool("CanDash", true)));
+            // フラグをオフにする
+            SetCanDash();
+
+            // アニメーションを再生する
+            PlayDashAnimation();
+
+            // 物理演算をする
+            Dash();
+
+            // フラグをオンにする
+            Invoke(nameof(SetCanDash), _dashCoolTime);
         }
     }
+
+    //-------------------------------------------------------------------------------
+    // ダッシュに関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>フラグを取得</summary>
+    private bool GetCanDash() => _animator.GetBool("CanDash");
+
+    /// <summary>フラグを設定</summary>
+    private void SetCanDash() =>
+        _animator.SetBool("CanDash", ! GetCanDash());
+
+    /// <summary>物理演算</summary>
+    void Dash() => _extraForce.AddForce(transform.forward * _dashDistance);
+
+    /// <summary>アニメーションを再生</summary>
+    void PlayDashAnimation() => _animator.Play("Dash Start");
+
+    //-------------------------------------------------------------------------------
+    // 攻撃のコールバックイベント
+    //-------------------------------------------------------------------------------
 
     /// <summary>攻撃のアニメーション遷移を行う</summary>
     /// <summary>PlayerInputから呼ばれる</summary>
     public void OnAttack(InputAction.CallbackContext context)
     {
         // 攻撃アクションが長押しされた場合
-        if(context.interaction is HoldInteraction && context.performed)
-        {
-            _animator.SetTrigger("Long Attack");
-        }
-        // 攻撃アクションが短く押された場合
-        else if(context.interaction is PressInteraction && context.performed)
-        {
-            _animator.SetTrigger("Short Attack");
-        }
+        if (context.interaction is HoldInteraction && context.performed) 
+            SetSpecialAttackTrigger();
+
+        // 攻撃アクションが押された場合
+        else if (context.interaction is PressInteraction && context.performed)
+            SetNormalAttackTrigger();
     }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        // 敵に攻撃された場合
-        if (other.gameObject.tag == "EnemyAttack")
-        {
-            SetIsDamagedTrue();
-            Invoke(nameof(SetIsDamagedFalse), 0.1f);
-
-            // 衝突位置を計算
-            var hitPos = GetComponent<Collider>().
-                ClosestPointOnBounds(other.transform.position);
-
-            // ダメージエフェクトを再生
-            PlayDamageEffect(hitPos, 0);
-        }
-    }
-
-    /// <summary>移動速度を設定する</summary>
-    private void SetSpeed() => _animator.SetFloat("Speed", _moveControl.CurrentSpeed);
-
-    /// <summary>接地判定を取得する</summary>
-    private bool IsOnGround() => _groundCheck.IsOnGround ? true : false;
-
-    /// <summary>接地判定を設定する</summary>
-    private void SetIsOnGround() => 
-        _animator.SetBool("IsOnGround", IsOnGround() ? true : false);
-
-    /// <summary>ダメージフラグを取得する</summary>
-    private bool IsDamaged() => _animator.GetBool("IsDamaged") ? true : false;
-
-    /// <summary>ダメージフラグを設定する</summary>
-    private void SetIsDamaged() => 
-        _animator.SetBool("IsDamaged", IsDamaged() ? false : true);
 
     /// <summary>攻撃が当たる瞬間に呼ばれるイベント</summary>
     /// <param name="currentColIndex">攻撃コライダーの識別子</param>
     /// <param name="attackEffectIndex">攻撃エフェクトの識別子</param>
-    public void AttackImpactEvent(int colliderIndex, int effectIndex)
+    public void AttackImpactEvent(int colliderIndex)
     {
+        // 攻撃コライダーを有効化
         EnableCol(colliderIndex);
+
+        // コライダーの識別子を設定
         SetCurrentColIndex(colliderIndex);
+
+        // 攻撃コライダーを無効化
         Invoke(nameof(DisableCol), 0.1f);
-        PlayAttackEffect(effectIndex);
+
+        // 攻撃エフェクトを表示
+        PlayAttackEffectOnAttackPos(0);
     }
+
+    //-------------------------------------------------------------------------------
+    // 攻撃に関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>通常攻撃のトリガーをオン</summary>
+    private void SetNormalAttackTrigger() => _animator.SetTrigger("Normal Attack");
+
+    /// <summary>特殊攻撃のトリガーをオン</summary>
+    private void SetSpecialAttackTrigger() => _animator.SetTrigger("Special Attack");
 
     /// <summary>識別子で指定した攻撃コライダーを有効化する</summary>
     private void EnableCol(int index) => _cols[index].enabled = true;
@@ -194,16 +247,47 @@ public class PlayerController : MonoBehaviour
     /// <summary>攻撃コライダーの識別子を設定する</summary>
     private void SetCurrentColIndex(int index) => _currentColIndex = index;
 
-    /// <summary>攻撃した位置に攻撃エフェクトを表示する</summary>
-    private void PlayAttackEffect(int index) =>
-        _effect.PlayAttackEffect(GetAttackPosition(), index);
-
-    /// <summary>攻撃された位置にダメージエフェクトを表示する</summary>
-    private void PlayDamageEffect(int index, Collider other) =>
-        _effect.PlayDamageEffect(GetImpactPosition(other), index);
-
     /// <summary>自分の攻撃コライダーの位置を返す</summary>
     private Vector3 GetAttackPosition() => _cols[_currentColIndex].transform.position;
+
+    /// <summary>攻撃した位置に攻撃エフェクトを表示する</summary>
+    private void PlayAttackEffectOnAttackPos(int index) =>
+        _effect.PlayAttackEffect(GetAttackPosition(), index);
+
+    //-------------------------------------------------------------------------------
+    // 被ダメージ時のコールバックイベント
+    //-------------------------------------------------------------------------------
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // 敵に攻撃された場合
+        if (other.gameObject.tag == "EnemyAttack")
+        {
+            // ダメージフラグをオン
+            SetIsDamaged();
+
+            // ダメージフラグをオフ
+            Invoke(nameof(SetIsDamaged), 0.1f);
+
+            // ダメージエフェクトを表示
+            PlayDamageEffectOnClosestDamagePos(0, other);
+        }
+    }
+
+    //-------------------------------------------------------------------------------
+    // 被ダメージ時に関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>フラグを取得</summary>
+    private bool GetIsDamaged() => _animator.GetBool("IsDamaged");
+
+    /// <summary>フラグを設定する</summary>
+    private void SetIsDamaged() => 
+        _animator.SetBool("IsDamaged", ! GetIsDamaged());
+
+    /// <summary>攻撃された位置にダメージエフェクトを表示する</summary>
+    private void PlayDamageEffectOnClosestDamagePos(int index, Collider other) =>
+        _effect.PlayDamageEffect(GetImpactPosition(other), index);
 
     /// <summary>相手の攻撃コライダーの位置を返す</summary>
     private Vector3 GetDamagePosition(Collider other) => other.transform.position;

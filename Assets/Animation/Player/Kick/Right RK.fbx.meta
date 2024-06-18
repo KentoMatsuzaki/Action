@@ -56,11 +56,11 @@ ModelImporter:
       curves: []
       events:
       - time: 0.42007434
-        functionName: EnableRightFootCol
+        functionName: AttackImpactEvent
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
-        intParameter: 0
+        intParameter: 2
         messageOptions: 0
       transformMask: []
       maskType: 3

@@ -2,7 +2,6 @@ using UnityEngine;
 using System;
 using CriWare;
 using System.Collections.Generic;
-using static CriWare.CriProfiler;
 
 public class CriSoundManager : SingletonMonoBehaviour<CriSoundManager>
 {
@@ -19,12 +18,17 @@ public class CriSoundManager : SingletonMonoBehaviour<CriSoundManager>
         Header("キュー名")] private List<string> _cueName;
 
     /// <summary>プレイヤー</summary>
-    private CriAtomExPlayer _player = new CriAtomExPlayer();
+    private CriAtomExPlayer _player;
 
     /// <summary>再生音のコレクション</summary>
     /// <summary>Key = キュー名，Value = Playback</summary>
     private Dictionary<string, CriAtomExPlayback> _playbackDic = 
         new Dictionary<string, CriAtomExPlayback>();
+
+    void Start()
+    {
+        _player = new CriAtomExPlayer();
+    }
 
     /// <summary>音声を再生してコレクションに登録する</summary>
     /// <param name="cueSheetName">キューシート名</param>

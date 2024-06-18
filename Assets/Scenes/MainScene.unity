@@ -1533,7 +1533,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c296b350971eb034483a2d567b64ad7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _attackDamage: 10
+  _power: 0
+  _index: 0
+  _volume: 0
 --- !u!1 &594013432
 GameObject:
   m_ObjectHideFlags: 0
@@ -1956,7 +1958,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c296b350971eb034483a2d567b64ad7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _attackDamage: 10
+  _power: 10
+  _index: 0
+  _volume: 0.75
 --- !u!1 &777731055
 GameObject:
   m_ObjectHideFlags: 0
@@ -2254,7 +2258,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c296b350971eb034483a2d567b64ad7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _attackDamage: 10
+  _power: 10
+  _index: 1
+  _volume: 1
 --- !u!1 &989600264
 GameObject:
   m_ObjectHideFlags: 0
@@ -2303,13 +2309,15 @@ MonoBehaviour:
   _cueSheetName:
   - CueSheet_0
   _playerCueNames:
+  - "\u30AD\u30C3\u30AF"
   - "\u8EFD\u3044\u30AD\u30C3\u30AF"
-  - "\u91CD\u3044\u30AD\u30C3\u30AF"
-  - "\u7D20\u624B\u306B\u3088\u308B\u653B\u6483"
   _zombieCueNames:
   - "\u30BE\u30F3\u30D3\u653B\u6483"
   - "\u30BE\u30F3\u30D3\u30C0\u30E1\u30FC\u30B8"
   - "\u30BE\u30F3\u30D3\u6B7B\u4EA1"
+  _actionCueNames:
+  - "\u30D6\u30EA\u30F3\u30AF"
+  - "\u30B8\u30E3\u30F3\u30D7"
 --- !u!1 &1050054857 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7269189869021432727, guid: df4b716990baa80499a4641dbb1c1258, type: 3}
@@ -2348,7 +2356,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c296b350971eb034483a2d567b64ad7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _attackDamage: 10
+  _power: 10
+  _index: 0
+  _volume: 0.75
 --- !u!1 &1050191686
 GameObject:
   m_ObjectHideFlags: 0
@@ -2418,7 +2428,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c296b350971eb034483a2d567b64ad7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _attackDamage: 10
+  _power: 10
+  _index: 1
+  _volume: 1
 --- !u!1 &1102250982
 GameObject:
   m_ObjectHideFlags: 0

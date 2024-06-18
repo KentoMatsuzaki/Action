@@ -21,6 +21,10 @@ public class CriSoundManager : SingletonMonoBehaviour<CriSoundManager>
     [SerializeField,
         Header("キュー名")] public List<string> _zombieCueNames;
 
+    /// <summary>アクションのSE</summary>
+    [SerializeField,
+        Header("キュー名")] public List<string> _actionCueNames;
+
     /// <summary>プレイヤー</summary>
     private CriAtomExPlayer _player;
 

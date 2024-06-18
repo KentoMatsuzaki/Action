@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.TinyCharacterController.Control;
 using Unity.TinyCharacterController.Check;
 using Unity.TinyCharacterController.Effect;
@@ -25,17 +26,8 @@ public class PlayerController : MonoBehaviour
     /// <summary>接地判定</summary>
     GroundCheck _groundCheck;
 
-    /// <summary>右手の攻撃判定用コライダー</summary>
-    [SerializeField, Header("右手の攻撃判定用コライダー")] Collider _rightHandCol;
-
-    /// <summary>左手の攻撃判定用コライダー</summary>
-    [SerializeField, Header("左手の攻撃判定用コライダー")] Collider _leftHandCol;
-
-    /// <summary>右足の攻撃判定用コライダー</summary>
-    [SerializeField, Header("右足の攻撃判定用コライダー")] Collider _rightFootCol;
-
-    /// <summary>左足の攻撃判定用コライダー</summary>
-    [SerializeField, Header("左足の攻撃判定用コライダー")] Collider _leftFootCol;
+    /// <summary>攻撃判定</summary>
+    [SerializeField, Header("攻撃判定")] List<Collider> _cols = new List<Collider>();
 
     /// <summary>通常時の速度</summary>
     [SerializeField, Header("通常時の移動速度")] float _normalSpeed = 1.2f;
@@ -49,6 +41,15 @@ public class PlayerController : MonoBehaviour
     /// <summary>ブリンクの移動距離</summary>
     [SerializeField, Header("ブリンクの移動距離")] float _dashDistance = 15f;
 
+    /// <summary>ダメージコライダー</summary>
+    Collider _passiveCol;
+
+    /// <summary>攻撃コライダーの識別子</summary>
+    int _currentColIndex;
+
+    /// <summary>エフェクト</summary>
+    EffectManager _effect;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -56,6 +57,8 @@ public class PlayerController : MonoBehaviour
         _groundCheck = GetComponent<GroundCheck>();
         _jumpControl = GetComponent<JumpControl>();
         _extraForce = GetComponent<ExtraForce>();
+        _passiveCol = GetComponent<Collider>();
+        _effect = EffectManager.Instance;
     }
     private void Update()
     {
@@ -154,133 +157,58 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /// <summary>アニメーターの「Speed」パラメーターを更新する</summary>
-    void SetSpeed()
+    /// <summary>移動速度を設定する</summary>
+    private void SetSpeed() => _animator.SetFloat("Speed", _moveControl.CurrentSpeed);
+
+    /// <summary>接地判定を取得する</summary>
+    private bool IsOnGround() => _groundCheck.IsOnGround ? true : false;
+
+    /// <summary>接地判定を設定する</summary>
+    private void SetIsOnGround() => 
+        _animator.SetBool("IsOnGround", IsOnGround() ? true : false);
+
+    /// <summary>ダメージフラグを取得する</summary>
+    private bool IsDamaged() => _animator.GetBool("IsDamaged") ? true : false;
+
+    /// <summary>ダメージフラグを設定する</summary>
+    private void SetIsDamaged() => 
+        _animator.SetBool("IsDamaged", IsDamaged() ? false : true);
+
+    /// <summary>攻撃が当たる瞬間に呼ばれるイベント</summary>
+    /// <param name="currentColIndex">攻撃コライダーの識別子</param>
+    /// <param name="attackEffectIndex">攻撃エフェクトの識別子</param>
+    public void AttackImpactEvent(int colliderIndex, int effectIndex)
     {
-        _animator.SetFloat("Speed", _moveControl.CurrentSpeed);
+        EnableCol(colliderIndex);
+        SetCurrentColIndex(colliderIndex);
+        Invoke(nameof(DisableCol), 0.1f);
+        PlayAttackEffect(effectIndex);
     }
 
-    /// <summary>アニメーターの「IsGround」パラメーターを更新する</summary>
-    void SetIsOnGround()
-    {
-        _animator.SetBool("IsOnGround", _groundCheck.IsOnGround ? true : false);
-    }
+    /// <summary>識別子で指定した攻撃コライダーを有効化する</summary>
+    private void EnableCol(int index) => _cols[index].enabled = true;
 
-    /// <summary>アニメーターの「IsDamaged」フラグをオンにする</summary>
-    void SetIsDamagedTrue()
-    {
-        _animator.SetBool("IsDamaged", true);
-    }
+    /// <summary>識別子で指定した攻撃コライダーを無効化する</summary>
+    private void DisableCol() => _cols[_currentColIndex].enabled = false;
 
-    /// <summary>アニメーターの「IsDamaged」フラグをオフにする</summary>
-    void SetIsDamagedFalse()
-    {
-        _animator.SetBool("IsDamaged", false);
-    }
+    /// <summary>攻撃コライダーの識別子を設定する</summary>
+    private void SetCurrentColIndex(int index) => _currentColIndex = index;
 
-    /// <summary>引数で指定した時間だけ待機してアクションを呼ぶ</summary>
-    /// <param name="waitTime">待ち時間</param>
-    /// <param name="action">待機後に実行するアクション</param>
-    IEnumerator WaitThenCallAction(float waitTime, Action action)
-    {
-        yield return new WaitForSeconds(waitTime);
-        action?.Invoke();
-    }
+    /// <summary>攻撃した位置に攻撃エフェクトを表示する</summary>
+    private void PlayAttackEffect(int index) =>
+        _effect.PlayAttackEffect(GetAttackPosition(), index);
 
-    /// <summary>右手のコライダーを有効化し、攻撃エフェクトを表示する</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-    public void EnableRightHandCol()
-    {
-        //Debug.Log("RightHandCol Enabled.");
-        _rightHandCol.enabled = true;
-        Invoke(nameof(DisableRightHandCol), 0.1f);
-        PlayAttackEffect(_rightHandCol.transform.position, 0);
-    }
+    /// <summary>攻撃された位置にダメージエフェクトを表示する</summary>
+    private void PlayDamageEffect(int index, Collider other) =>
+        _effect.PlayDamageEffect(GetImpactPosition(other), index);
 
-    /// <summary>右手のコライダーを無効化</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-    public void DisableRightHandCol()
-    {
-        //Debug.Log("RightHandCol Disabled.");
-        _rightHandCol.enabled = false;
-    }
+    /// <summary>自分の攻撃コライダーの位置を返す</summary>
+    private Vector3 GetAttackPosition() => _cols[_currentColIndex].transform.position;
 
-    /// <summary>左手のコライダーを有効化し、攻撃エフェクトを表示する</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-    public void EnableLeftHandCol()
-    {
-        //Debug.Log("LeftHandCol Enabled.");
-        _leftHandCol.enabled = true;
-        Invoke(nameof(DisableLeftHandCol), 0.1f);
-        PlayAttackEffect(_leftHandCol.transform.position, 0);
-    }
+    /// <summary>相手の攻撃コライダーの位置を返す</summary>
+    private Vector3 GetDamagePosition(Collider other) => other.transform.position;
 
-    /// <summary>左手のコライダーを無効化</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-
-    public void DisableLeftHandCol()
-    {
-        //Debug.Log("LeftHandCol Disabled.");
-        _leftHandCol.enabled= false;
-    }
-
-    /// <summary>右足のコライダーを有効化し、攻撃エフェクトを表示する</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-    public void EnableRightFootCol()
-    {
-        //Debug.Log("RightFootCol Enabled.");
-        _rightFootCol.enabled = true;
-        Invoke(nameof(DisableRightFootCol), 0.1f);
-        PlayAttackEffect(_rightFootCol.transform.position, 0);
-    }
-
-    /// <summary>右足のコライダーを無効化</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-    public void DisableRightFootCol()
-    {
-        //Debug.Log("RightFootCol Disabled.");
-        _rightFootCol.enabled = false;
-    }
-
-    /// <summary>左足のコライダーを有効化し、攻撃エフェクトを表示する</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-    public void EnableLeftFootCol()
-    {
-        //Debug.Log("LeftFootCol Enabled.");
-        _leftFootCol.enabled = true;
-        Invoke(nameof(DisableLeftFootCol), 0.1f);
-        PlayAttackEffect(_leftFootCol.transform.position, 0);
-    }
-
-    /// <summary>左足のコライダーを無効化</summary>
-    /// <summary>アニメーションイベントから呼ばれる</summary>
-    public void DisableLeftFootCol()
-    {
-        //Debug.Log("LeftFootCol Disabled.");
-        _leftFootCol.enabled= false;
-    }
-
-    /// <summary>座標を指定して攻撃エフェクトを表示する</summary>
-    /// <param name="pos">エフェクトを表示させる座標</param>
-    /// <param name="index">エフェクトのインデックス</param>
-    private void PlayAttackEffect(Vector3 pos, int index)
-    {
-        EffectController.Instance.PlayAttackEffect(pos, index);
-    }
-
-    /// <summary>座標を指定してダメージエフェクトを表示する</summary>
-    /// <param name="pos">エフェクトを表示させる座標</param>
-    /// <param name="index">エフェクトのインデックス</param>
-    private void PlayDamageEffect(Vector3 pos, int index)
-    {
-        EffectController.Instance.PlayDamageEffect(pos, index);
-    }
-
-    /// <summary>座標を指定して死亡エフェクトを表示する</summary>
-    /// <param name="pos">エフェクトを表示させる座標</param>
-    /// <param name="index">エフェクトのインデックス</param>
-    private void PlayDeadEffect(Vector3 pos, int index)
-    {
-        EffectController.Instance.PlayDeadEffect(pos, index);
-    }
+    /// <summary>相手の攻撃コライダーから最も近いコライダー上の位置を返す</summary>
+    private Vector3 GetImpactPosition(Collider other) 
+        => _passiveCol.ClosestPoint(GetDamagePosition(other));
 }

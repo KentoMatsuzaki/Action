@@ -1960,7 +1960,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _power: 10
   _index: 0
-  _volume: 0.75
+  _volume: 1
 --- !u!1 &777731055
 GameObject:
   m_ObjectHideFlags: 0
@@ -2358,7 +2358,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _power: 10
   _index: 0
-  _volume: 0.75
+  _volume: 1
 --- !u!1 &1050191686
 GameObject:
   m_ObjectHideFlags: 0

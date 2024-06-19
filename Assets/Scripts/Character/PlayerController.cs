@@ -42,8 +42,8 @@ public class PlayerController : MonoBehaviour
     /// <summary>SEの識別子</summary>
     [SerializeField, Header("SEのインデックス")] int _soundIndex;
 
-    /// <summary>SEの識別子</summary>
-    [SerializeField, Header("SEのボリューム")] float _volume;
+    /// <summary>SEの音量</summary>
+    [SerializeField, Header("攻撃SEのボリューム")] float _volume;
 
     /// <summary>ダメージコライダー</summary>
     Collider _passiveCol;
@@ -137,13 +137,23 @@ public class PlayerController : MonoBehaviour
     public void OnJump(InputAction.CallbackContext context)
     {
         // ジャンプが入力された場合
-        if (context.performed) Jump();
+        if (context.performed)
+        {
+            // 物理演算
+            Jump();
+        }
     }
 
     /// <summary>ジャンプのアニメーション再生を行う</summary>
     /// <summary>JumpControlから呼ばれる</summary>
-    public void OnJumpStart() => PlayJumpAnimation();
+    public void OnJumpStart()
+    {
+        // アニメーションを再生
+        PlayJumpAnimation();
 
+        // SEを再生
+        PlaySE(4, 0.75f);
+    }
     //-------------------------------------------------------------------------------
     // ジャンプに関する処理
     //-------------------------------------------------------------------------------
@@ -178,6 +188,9 @@ public class PlayerController : MonoBehaviour
 
             // 物理演算をする
             Dash();
+
+            // SEを再生
+            PlaySE(3, 0.75f);
 
             // フラグをオンにする
             Invoke(nameof(SetCanDash), _dashCoolTime);

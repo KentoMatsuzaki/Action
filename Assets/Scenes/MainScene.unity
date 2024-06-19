@@ -2314,13 +2314,12 @@ MonoBehaviour:
   - "\u30AD\u30C3\u30AF"
   - "\u8EFD\u3044\u30AD\u30C3\u30AF"
   - "\u6575\u306E\u653B\u6483"
+  - "\u30D6\u30EA\u30F3\u30AF"
+  - "\u30B8\u30E3\u30F3\u30D7"
   _enemyCueNames:
   - "\u30BE\u30F3\u30D3\u653B\u6483"
   - "\u30BE\u30F3\u30D3\u30C0\u30E1\u30FC\u30B8"
   - "\u30BE\u30F3\u30D3\u6B7B\u4EA1"
-  _actionCueNames:
-  - "\u30D6\u30EA\u30F3\u30AF"
-  - "\u30B8\u30E3\u30F3\u30D7"
 --- !u!1 &1050054857 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7269189869021432727, guid: df4b716990baa80499a4641dbb1c1258, type: 3}

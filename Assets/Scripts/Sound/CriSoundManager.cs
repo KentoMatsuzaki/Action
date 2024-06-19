@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using CriWare;
 using System.Collections.Generic;
 
 public class CriSoundManager : SingletonMonoBehaviour<CriSoundManager>
@@ -20,10 +19,6 @@ public class CriSoundManager : SingletonMonoBehaviour<CriSoundManager>
     /// <summary>敵のSE</summary>
     [SerializeField,
         Header("キュー名")] public List<string> _enemyCueNames;
-
-    /// <summary>アクションのSE</summary>
-    [SerializeField,
-        Header("キュー名")] public List<string> _actionCueNames;
 
     /// <summary>プレイヤー</summary>
     private CriAtomExPlayer _player;

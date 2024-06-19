@@ -274,6 +274,9 @@ public class PlayerController : MonoBehaviour
 
             // ダメージエフェクトを表示
             PlayDamageEffectOnClosestDamagePos(0, other);
+
+            // SEを再生
+            PlaySE(2, 1.25f);
         }
     }
 

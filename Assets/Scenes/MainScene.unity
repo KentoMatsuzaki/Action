@@ -2313,6 +2313,7 @@ MonoBehaviour:
   _playerCueNames:
   - "\u30AD\u30C3\u30AF"
   - "\u8EFD\u3044\u30AD\u30C3\u30AF"
+  - "\u6575\u306E\u653B\u6483"
   _enemyCueNames:
   - "\u30BE\u30F3\u30D3\u653B\u6483"
   - "\u30BE\u30F3\u30D3\u30C0\u30E1\u30FC\u30B8"
@@ -3178,7 +3179,7 @@ MonoBehaviour:
   _dashCoolTime: 0.5
   _dashDistance: 15
   _soundIndex: 0
-  _volume: 0.5
+  _volume: 0.75
 --- !u!114 &1949845270
 MonoBehaviour:
   m_ObjectHideFlags: 0

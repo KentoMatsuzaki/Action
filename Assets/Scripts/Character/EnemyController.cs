@@ -1,6 +1,6 @@
-using UnityEngine;
 using System;
 using System.Collections;
+using UnityEngine;
 
 /// <summary>敵の制御</summary>
 public class EnemyController : MonoBehaviour
@@ -26,110 +26,143 @@ public class EnemyController : MonoBehaviour
         Attack();
     }
 
+    //-------------------------------------------------------------------------------
+    // 被ダメージ時のコールバックイベント
+    //-------------------------------------------------------------------------------
+
     private void OnTriggerEnter(Collider other)
     {
-        // プレイヤーに攻撃された場合
-        if (other.gameObject.tag == "PlayerAttack" && !_animator.GetBool("IsDamaged"))
+        // プレイヤーに攻撃を受けた場合 && ダメージを受けていない場合
+        if (other.gameObject.tag == "PlayerAttack" && ! IsDamaged())
         {
-            // 被ダメージ処理
-            GetDamage(other);
+            // 生きている場合
+            if (IsAlive())
+            {
+                // ダメージ処理
+                TakeDamage(other);
+            }
 
-            // 死亡状態に遷移して処理を抜ける
-            if (IsDied())
+            // 死んでいる場合
+            if (IsDead())
             {
-                _animator.Play("Died");
-                return;
+                // 死亡アニメーションを再生
+                PlayDeathAnimation();
             }
-            // ダウン状態に遷移する
-            else if (IsReadyForDown())
+
+            // ダウンする場合
+            else if (IsDown())
             {
-                _animator.Play("Get Down");
+                // ダウンアニメーションを再生
+                PlayDownAnimation();
+
                 // ダメージフラグをオンにする
-                SetIsDamagedTrue();
+                SetDamaged(true);
             }
-            // やられ状態に遷移する
+
+            // 通常時
             else
             {
                 // ダメージフラグをオンにする
-                SetIsDamagedTrue();
+                SetDamaged(true);
 
                 // ダメージフラグをオフにする
-                Invoke(nameof(SetIsDamagedFalse), 0.1f);
+                Invoke(nameof(UnsetDamaged), 0.1f);
 
                 // ヒットカウントを1だけ増加させる
-                AddHitCountByOne();
+                IncrementHitCount();
             }
         }
     }
 
-    
+    //-------------------------------------------------------------------------------
+    // 被ダメージ時に関する処理
+    //-------------------------------------------------------------------------------
 
-    /// <summary>被ダメージ処理</summary>
-    void GetDamage(Collider other)
-    {
-        // 被ダメージ量
-        int damage = other.GetComponent<Attacker>().Power;
-        
-        // 体力を更新する
-        if(_hp > 0) DecreaseHP(damage);
-    }
+    /// <summary>攻撃を受けている最中か</summary>
+    private bool IsDamaged() => _animator.GetBool("IsDamaged");
 
-    /// <summary>受けたダメージ分だけ体力を減少させる</summary>
-    /// <param name="damage">被ダメージ量</param>
-    void DecreaseHP(int damage) => _hp -= damage;
+    /// <summary>生きているか</summary>
+    private bool IsAlive() => _hp > 0;
 
-    /// <summary>死亡しているか</summary>
-    bool IsDied() => _hp <= 0 ? true : false;
+    /// <summary>死んでいるか</summary>
+    private bool IsDead() => _hp <= 0;
 
-    /// <summary>次の攻撃を受けてダウンするか</summary>
-    bool IsReadyForDown() => _animator.GetInteger("HitCount") == 4 ? true : false;
+    /// <summary>ダウンするか</summary>
+    bool IsDown() => _animator.GetInteger("HitCount") == 4 ? true : false;
 
-    /// <summary>アニメーターの「IsDamaged」フラグをオンにする</summary>
-    public void SetIsDamagedTrue() => _animator.SetBool("IsDamaged", true);
+    /// <summary>ダメージ量を算出</summary>
+    private int CalDamage(Collider other) => other.GetComponent<Attacker>().Power;
 
-    /// <summary>アニメーターの「IsDamaged」フラグをオフにする</summary>
-    public void SetIsDamagedFalse() => _animator.SetBool("IsDamaged", false);
+    /// <summary>体力を設定</summary>
+    private void SetHP(int damage) => _hp -= damage;
+
+    /// <summary>ダメージ処理</summary>
+    private void TakeDamage(Collider other) => SetHP(CalDamage(other));
+
+    /// <summary>死亡アニメーションを再生</summary>
+    private void PlayDeathAnimation() => _animator.Play("Died");
+
+    /// <summary>ダウンアニメーションを再生</summary>
+    private void PlayDownAnimation() => _animator.Play("Get Down");
+
+    /// <summary>ダメージフラグを設定</summary>
+    private void SetDamaged(bool value) => _animator.SetBool("IsDamaged", value);
+
+    /// <summary>ダメージフラグを解除</summary>
+    private void UnsetDamaged() => SetDamaged(false);
 
     /// <summary>ヒットカウントを1増加させる</summary>
-    void AddHitCountByOne() => _animator.SetInteger("HitCount", (_animator.GetInteger("HitCount") + 1));
+    private void IncrementHitCount() => 
+        _animator.SetInteger("HitCount", (_animator.GetInteger("HitCount") + 1));
 
     /// <summary>ヒットカウントを0に設定する</summary>
     public void ResetHitCount() => _animator.SetInteger("HitCount", 0);
 
-    /// <summary>攻撃状態に遷移する</summary>
+    /// <summary>少し待ってから起き上がりトリガーをオンにする</summary>
+    public void WaitSetRiseTrigger()
+        => Invoke(nameof(SetRiseTrigger), 2.0f);
+
+    /// <summary>起き上がりトリガーをオンにする</summary>
+    private void SetRiseTrigger() => _animator.SetTrigger("Rise");
+
+    //-------------------------------------------------------------------------------
+    // 攻撃のイベント
+    //-------------------------------------------------------------------------------
+
+    /// <summary>攻撃のアニメーション再生を行う</summary>
     public void Attack()
     {
-        if(CanAttack()) _animator.Play("Attack");
+        if(CanAttack()) PlayAttackAnimation();
     }
-
-    /// <summary>攻撃可能かどうか</summary>
-    /// <returns>攻撃を受けていない：true / 攻撃を受けている：false</returns>
-    public bool CanAttack() => _animator.GetBool("IsDamaged") ? false : true;
 
     /// <summary>攻撃の命中イベント</summary>
     public void AttackImpactEvent()
     {
-        _attackCol.enabled = true;
-        Invoke(nameof(AttackEndEvent), 0.1f);
+        // 攻撃コライダーを有効化
+        EnableAttackCol();
+
+        // 攻撃コライダーを無効化
+        Invoke(nameof(DisableAttackCol), 0.1f);
     }
 
-    /// <summary>攻撃の終了イベント</summary>
-    public void AttackEndEvent() => _attackCol.enabled = false;
+    //-------------------------------------------------------------------------------
+    // 攻撃に関する処理
+    //-------------------------------------------------------------------------------
 
-    /// <summary>待機してからアクションを実行する</summary>
-    /// <param name="waitTime">待機時間</param>
-    /// <param name="action">アクション</param>
-    IEnumerator WaitThenCallAction(float waitTime, Action action)
-    {
-        yield return new WaitForSeconds(waitTime);
-        action?.Invoke();
-    }
+    /// <summary>攻撃可能かどうか</summary>
+    private bool CanAttack() => _animator.GetBool("IsDamaged") ? false : true;
 
-    /// <summary>起き上がり状態に遷移する</summary>
-    public void WaitForSecondsToRiseUp()
-    {
-        StartCoroutine(WaitThenCallAction(2f, () => _animator.SetTrigger("RiseUp")));
-    }
+    private void PlayAttackAnimation() => _animator.Play("Attack");
+
+    /// <summary>攻撃コライダーを有効化</summary>
+    private void EnableAttackCol() => _attackCol.enabled = true;
+
+    /// <summary>攻撃コライダーを無効化</summary>
+    private void DisableAttackCol() => _attackCol.enabled = false;
+
+    //-------------------------------------------------------------------------------
+    // 移動に関する処理
+    //-------------------------------------------------------------------------------
 
     /// <summary>プレイヤーが近くにいるかどうか</summary>
     public bool IsPlayerClose()

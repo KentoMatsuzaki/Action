@@ -1,3 +1,4 @@
+using Unity.TinyCharacterController.Control;
 using UnityEngine;
 
 /// <summary>敵の制御</summary>
@@ -21,9 +22,13 @@ public class EnemyController : MonoBehaviour
     /// <summary>サウンド</summary>
     CriSoundManager _soundManager;
 
+    /// <summary>移動制御</summary>
+    MoveControl _moveControl;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
+        _moveControl = GetComponent<MoveControl>();
         _soundManager = CriSoundManager.Instance;
         Attack();
     }
@@ -179,18 +184,6 @@ public class EnemyController : MonoBehaviour
     private void DisableAttackCol() => _attackCol.enabled = false;
 
     //-------------------------------------------------------------------------------
-    // 移動に関する処理
-    //-------------------------------------------------------------------------------
-
-    /// <summary>プレイヤーが近くにいるかどうか</summary>
-    public bool IsPlayerClose() => 
-        CalDistanceBetweenPlayer() <= _searchDistance ? true : false;
-
-    /// <summary>プレイヤーとの距離を算出する</summary>
-    float CalDistanceBetweenPlayer() => 
-        Vector3.Distance(transform.position, _player.position);
-
-    //-------------------------------------------------------------------------------
     // SEに関する処理
     //-------------------------------------------------------------------------------
 
@@ -211,9 +204,10 @@ public class EnemyController : MonoBehaviour
     private void PlayDeadSound() => PlaySE(2, 0.5f);
 
     //-------------------------------------------------------------------------------
-    // AIに関する処理
+    // BehaviourTreeのノード
     //-------------------------------------------------------------------------------
 
+    /// <summary>攻撃アクション</summary>
     public NodeStatus BTAttack()
     {
         // 既存のAttackメソッドを呼び出す
@@ -222,4 +216,38 @@ public class EnemyController : MonoBehaviour
         // 一度の攻撃が完了したら成功を返す
         return NodeStatus.Success; 
     }
+
+    /// <summary>追跡アクション</summary>
+    public NodeStatus Chase(Transform player)
+    {
+        MoveToPlayer(player);
+
+        if (GetDistanceToPlayer() < 1.0f)
+        {
+            return NodeStatus.Success;
+        }
+
+        return NodeStatus.Running;
+    }
+
+    //-------------------------------------------------------------------------------
+    // BehaviourTreeに関する処理
+    //-------------------------------------------------------------------------------
+
+    
+
+    /// <summary>プレイヤーが近くにいるかどうか</summary>
+    public bool IsPlayerClose() =>
+        GetDistanceToPlayer() <= _searchDistance ? true : false;
+
+    /// <summary>プレイヤーとの距離を算出する</summary>
+    float GetDistanceToPlayer() =>
+        Vector3.Distance(transform.position, _player.position);
+
+    /// <summary>プレイヤーへの方向を算出する</summary>
+    Vector3 GetDirectionToPlayer(Transform player)
+        => player.position - transform.position;
+
+    private void MoveToPlayer(Transform player) =>
+        _moveControl.Move(GetDirectionToPlayer(player) * Time.deltaTime);
 }

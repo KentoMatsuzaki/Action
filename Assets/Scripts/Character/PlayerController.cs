@@ -1,14 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Unity.TinyCharacterController.Control;
 using Unity.TinyCharacterController.Check;
 using Unity.TinyCharacterController.Effect;
 using UnityEngine.InputSystem.Interactions;
-using static CriProfiler;
-using static CriAtomExCategory.ReactDuckerParameter;
 
 /// <summary>ÉvÉåÉCÉÑÅ[êßå‰</summary>
 public class PlayerController : MonoBehaviour

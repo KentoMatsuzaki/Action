@@ -2494,6 +2494,7 @@ MonoBehaviour:
   _player: {fileID: 1949845268}
   _hp: 100
   _searchDistance: 5
+  _volume: 0.25
 --- !u!4 &1102250985
 Transform:
   m_ObjectHideFlags: 0

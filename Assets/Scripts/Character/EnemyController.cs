@@ -8,21 +8,28 @@ public class EnemyController : MonoBehaviour
     /// <summary>アニメーター</summary>
     Animator _animator;
 
-    /// <summary>攻撃用コライダー</summary>
-    [SerializeField] Collider _attackCol;
+    /// <summary>攻撃コライダー</summary>
+    [SerializeField, Header("攻撃コライダー")] Collider _attackCol;
 
     /// <summary>プレイヤー</summary>
-    [SerializeField] Transform _player;
+    [SerializeField, Header("プレイヤーの位置")] Transform _player;
 
     /// <summary>体力</summary>
-    [SerializeField] int _hp = 100;
+    [SerializeField, Header("敵のHP")] int _hp = 100;
 
     /// <summary>索敵距離</summary>
-    [SerializeField] float _searchDistance;
+    [SerializeField, Header("索敵距離")] float _searchDistance;
+
+    /// <summary>SEの音量</summary>
+    [SerializeField, Header("SEのボリューム")] float _volume;
+
+    /// <summary>サウンド</summary>
+    CriSoundManager _soundManager;
 
     private void Start()
     {
         _animator = GetComponent<Animator>();
+        _soundManager = CriSoundManager.Instance;
         Attack();
     }
 
@@ -129,10 +136,17 @@ public class EnemyController : MonoBehaviour
     // 攻撃のイベント
     //-------------------------------------------------------------------------------
 
-    /// <summary>攻撃のアニメーション再生を行う</summary>
+    /// <summary>攻撃イベント</summary>
     public void Attack()
     {
-        if(CanAttack()) PlayAttackAnimation();
+        if (CanAttack())
+        {
+            // アニメーションを再生
+            PlayAttackAnimation();
+
+            // SEを再生
+            Invoke(nameof(PlayAttackSound), 0.1f);
+        }
     }
 
     /// <summary>攻撃の命中イベント</summary>
@@ -178,4 +192,18 @@ public class EnemyController : MonoBehaviour
     {
         Vector3.MoveTowards(transform.position, _player.position, 2f * Time.deltaTime);
     }
+
+    //-------------------------------------------------------------------------------
+    // SEに関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>キュー名を取得</summary>
+    private string GetCueName(int index) => _soundManager._enemyCueNames[index];
+
+    /// <summary>SEを再生</summary>
+    private void PlaySE(int index, float volume)
+        => CriSoundManager.Instance.Play("CueSheet_0", GetCueName(index), volume);
+
+    /// <summary>攻撃SEを再生</summary>
+    private void PlayAttackSound() => PlaySE(0, _volume);
 }

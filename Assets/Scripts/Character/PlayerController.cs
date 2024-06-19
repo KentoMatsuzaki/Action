@@ -7,6 +7,8 @@ using Unity.TinyCharacterController.Control;
 using Unity.TinyCharacterController.Check;
 using Unity.TinyCharacterController.Effect;
 using UnityEngine.InputSystem.Interactions;
+using static CriProfiler;
+using static CriAtomExCategory.ReactDuckerParameter;
 
 /// <summary>プレイヤー制御</summary>
 public class PlayerController : MonoBehaviour
@@ -41,6 +43,12 @@ public class PlayerController : MonoBehaviour
     /// <summary>ブリンクの移動距離</summary>
     [SerializeField, Header("ブリンクの移動距離")] float _dashDistance = 15f;
 
+    /// <summary>SEの識別子</summary>
+    [SerializeField, Header("SEのインデックス")] int _soundIndex;
+
+    /// <summary>SEの識別子</summary>
+    [SerializeField, Header("SEのボリューム")] float _volume;
+
     /// <summary>ダメージコライダー</summary>
     Collider _passiveCol;
 
@@ -49,6 +57,9 @@ public class PlayerController : MonoBehaviour
 
     /// <summary>エフェクト</summary>
     EffectManager _effect;
+
+    /// <summary>サウンド</summary>
+    CriSoundManager _soundManager;
 
     private void Start()
     {
@@ -59,6 +70,7 @@ public class PlayerController : MonoBehaviour
         _extraForce = GetComponent<ExtraForce>();
         _passiveCol = GetComponent<Collider>();
         _effect = EffectManager.Instance;
+        _soundManager = CriSoundManager.Instance;
     }
 
     private void Update()
@@ -226,6 +238,9 @@ public class PlayerController : MonoBehaviour
 
         // 攻撃エフェクトを表示
         PlayAttackEffectOnAttackPos(0);
+
+        // SEを再生
+        PlaySE(_soundIndex, _volume);
     }
 
     //-------------------------------------------------------------------------------
@@ -264,10 +279,10 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "EnemyAttack")
         {
             // ダメージフラグをオン
-            SetIsDamaged();
+            SetIsDamagedTrue();
 
             // ダメージフラグをオフ
-            Invoke(nameof(SetIsDamaged), 0.1f);
+            Invoke(nameof(SetIsDamagedFalse), 0.1f);
 
             // ダメージエフェクトを表示
             PlayDamageEffectOnClosestDamagePos(0, other);
@@ -278,12 +293,13 @@ public class PlayerController : MonoBehaviour
     // 被ダメージ時に関する処理
     //-------------------------------------------------------------------------------
 
-    /// <summary>フラグを取得</summary>
-    private bool GetIsDamaged() => _animator.GetBool("IsDamaged");
+    /// <summary>フラグをオンに設定する</summary>
+    private void SetIsDamagedTrue() =>
+        _animator.SetBool("IsDamaged", true);
 
-    /// <summary>フラグを設定する</summary>
-    private void SetIsDamaged() => 
-        _animator.SetBool("IsDamaged", ! GetIsDamaged());
+    /// <summary>フラグをオフに設定する</summary>
+    private void SetIsDamagedFalse() => 
+        _animator.SetBool("IsDamaged", false);
 
     /// <summary>攻撃された位置にダメージエフェクトを表示する</summary>
     private void PlayDamageEffectOnClosestDamagePos(int index, Collider other) =>
@@ -295,4 +311,15 @@ public class PlayerController : MonoBehaviour
     /// <summary>相手の攻撃コライダーから最も近いコライダー上の位置を返す</summary>
     private Vector3 GetImpactPosition(Collider other) 
         => _passiveCol.ClosestPoint(GetDamagePosition(other));
+
+    //-------------------------------------------------------------------------------
+    // SEの再生に関する処理
+    //-------------------------------------------------------------------------------
+
+    /// <summary>キュー名を取得</summary>
+    private string GetCueName(int index) => _soundManager._playerCueNames[index];
+
+    /// <summary>SEを再生</summary>
+    private void PlaySE(int index, float volume)
+        => CriSoundManager.Instance.Play("CueSheet_0", GetCueName(index), volume);
 }

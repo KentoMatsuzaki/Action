@@ -1533,7 +1533,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c296b350971eb034483a2d567b64ad7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _power: 0
+  _power: 10
   _index: 0
   _volume: 0
 --- !u!1 &594013432
@@ -1960,7 +1960,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _power: 10
   _index: 1
-  _volume: 1
+  _volume: 0.5
 --- !u!1 &777731055
 GameObject:
   m_ObjectHideFlags: 0
@@ -2259,7 +2259,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _power: 10
   _index: 1
-  _volume: 1
+  _volume: 0.5
 --- !u!1 &989600264
 GameObject:
   m_ObjectHideFlags: 0
@@ -2310,7 +2310,7 @@ MonoBehaviour:
   _playerCueNames:
   - "\u30AD\u30C3\u30AF"
   - "\u8EFD\u3044\u30AD\u30C3\u30AF"
-  _zombieCueNames:
+  _enemyCueNames:
   - "\u30BE\u30F3\u30D3\u653B\u6483"
   - "\u30BE\u30F3\u30D3\u30C0\u30E1\u30FC\u30B8"
   - "\u30BE\u30F3\u30D3\u6B7B\u4EA1"
@@ -2357,7 +2357,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _power: 10
   _index: 1
-  _volume: 1
+  _volume: 0.5
 --- !u!1 &1050191686
 GameObject:
   m_ObjectHideFlags: 0
@@ -2429,7 +2429,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _power: 10
   _index: 1
-  _volume: 1
+  _volume: 0.5
 --- !u!1 &1102250982
 GameObject:
   m_ObjectHideFlags: 0
@@ -3172,6 +3172,8 @@ MonoBehaviour:
   _sprintSpeed: 7.5
   _dashCoolTime: 0.5
   _dashDistance: 15
+  _soundIndex: 0
+  _volume: 0.75
 --- !u!114 &1949845270
 MonoBehaviour:
   m_ObjectHideFlags: 0

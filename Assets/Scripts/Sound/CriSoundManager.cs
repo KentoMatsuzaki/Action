@@ -17,9 +17,9 @@ public class CriSoundManager : SingletonMonoBehaviour<CriSoundManager>
     [SerializeField,
         Header("キュー名")] public List<string> _playerCueNames;
 
-    /// <summary>ゾンビのSE</summary>
+    /// <summary>敵のSE</summary>
     [SerializeField,
-        Header("キュー名")] public List<string> _zombieCueNames;
+        Header("キュー名")] public List<string> _enemyCueNames;
 
     /// <summary>アクションのSE</summary>
     [SerializeField,

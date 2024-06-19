@@ -183,19 +183,12 @@ public class EnemyController : MonoBehaviour
     //-------------------------------------------------------------------------------
 
     /// <summary>プレイヤーが近くにいるかどうか</summary>
-    public bool IsPlayerClose()
-    {
-        // プレイヤーとの距離
-        float distance = Vector3.Distance(transform.position, _player.position);
+    public bool IsPlayerClose() => 
+        CalDistanceBetweenPlayer() <= _searchDistance ? true : false;
 
-        // 索敵距離とプレイヤーとの距離を比較する
-        return _searchDistance >= distance ? true : false;
-    }
-
-    public void MoveTowardPlayer()
-    {
-        Vector3.MoveTowards(transform.position, _player.position, 2f * Time.deltaTime);
-    }
+    /// <summary>プレイヤーとの距離を算出する</summary>
+    float CalDistanceBetweenPlayer() => 
+        Vector3.Distance(transform.position, _player.position);
 
     //-------------------------------------------------------------------------------
     // SEに関する処理
@@ -216,4 +209,17 @@ public class EnemyController : MonoBehaviour
 
     /// <summary>死亡SEを再生</summary>
     private void PlayDeadSound() => PlaySE(2, 0.5f);
+
+    //-------------------------------------------------------------------------------
+    // AIに関する処理
+    //-------------------------------------------------------------------------------
+
+    public NodeStatus BTAttack()
+    {
+        // 既存のAttackメソッドを呼び出す
+        Attack();
+
+        // 一度の攻撃が完了したら成功を返す
+        return NodeStatus.Success; 
+    }
 }

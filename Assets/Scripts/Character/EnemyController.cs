@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using UnityEngine;
 
 /// <summary>敵の制御</summary>
@@ -19,9 +17,6 @@ public class EnemyController : MonoBehaviour
 
     /// <summary>索敵距離</summary>
     [SerializeField, Header("索敵距離")] float _searchDistance;
-
-    /// <summary>SEの音量</summary>
-    [SerializeField, Header("SEのボリューム")] float _volume;
 
     /// <summary>サウンド</summary>
     CriSoundManager _soundManager;
@@ -53,7 +48,10 @@ public class EnemyController : MonoBehaviour
             if (IsDead())
             {
                 // 死亡アニメーションを再生
-                PlayDeathAnimation();
+                PlayDeadAnimation();
+
+                // SEを再生
+                PlayDeadSound();
             }
 
             // ダウンする場合
@@ -64,6 +62,9 @@ public class EnemyController : MonoBehaviour
 
                 // ダメージフラグをオンにする
                 SetDamaged(true);
+
+                // SEを再生
+                PlayDamageSound();
             }
 
             // 通常時
@@ -77,6 +78,9 @@ public class EnemyController : MonoBehaviour
 
                 // ヒットカウントを1だけ増加させる
                 IncrementHitCount();
+
+                // SEを再生
+                PlayDamageSound();
             }
         }
     }
@@ -107,7 +111,7 @@ public class EnemyController : MonoBehaviour
     private void TakeDamage(Collider other) => SetHP(CalDamage(other));
 
     /// <summary>死亡アニメーションを再生</summary>
-    private void PlayDeathAnimation() => _animator.Play("Died");
+    private void PlayDeadAnimation() => _animator.Play("Died");
 
     /// <summary>ダウンアニメーションを再生</summary>
     private void PlayDownAnimation() => _animator.Play("Get Down");
@@ -205,5 +209,11 @@ public class EnemyController : MonoBehaviour
         => CriSoundManager.Instance.Play("CueSheet_0", GetCueName(index), volume);
 
     /// <summary>攻撃SEを再生</summary>
-    private void PlayAttackSound() => PlaySE(0, _volume);
+    private void PlayAttackSound() => PlaySE(0, 0.25f);
+
+    /// <summary>ダメージSEを再生</summary>
+    private void PlayDamageSound() => PlaySE(1, 1f);
+
+    /// <summary>死亡SEを再生</summary>
+    private void PlayDeadSound() => PlaySE(2, 0.5f);
 }

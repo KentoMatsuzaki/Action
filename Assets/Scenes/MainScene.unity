@@ -1535,8 +1535,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _power: 10
   _effectIndex: 0
-  _soundIndex: 0
-  _volume: 0
+  _soundIndex: 2
+  _volume: 0.25
 --- !u!1 &594013432
 GameObject:
   m_ObjectHideFlags: 0

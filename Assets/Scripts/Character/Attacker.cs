@@ -52,8 +52,7 @@ public class Attacker : MonoBehaviour
         // 敵が攻撃する場合の処理
         else
         {
-            // SEを再生
-            PlayEnemySE(_soundIndex, _volume);
+            
         }
     }
 
@@ -79,7 +78,7 @@ public class Attacker : MonoBehaviour
     private string GetPlayerCueName(int index) => _soundManager._playerCueNames[index];
 
     /// <summary>敵SEのキュー名を取得</summary>
-    private string GetEnemyCueName(int index) => _soundManager._playerCueNames[index];
+    private string GetEnemyCueName(int index) => _soundManager._enemyCueNames[index];
 
     /// <summary>プレイヤーのSEを再生</summary>
     private void PlayPlayerSE(int index, float volume)

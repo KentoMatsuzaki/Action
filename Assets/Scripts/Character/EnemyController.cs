@@ -68,7 +68,7 @@ public class EnemyController : MonoBehaviour
     void GetDamage(Collider other)
     {
         // 被ダメージ量
-        int damage = other.GetComponent<Attacker>().GetAttackDamage();
+        int damage = other.GetComponent<Attacker>().Power;
         
         // 体力を更新する
         if(_hp > 0) DecreaseHP(damage);

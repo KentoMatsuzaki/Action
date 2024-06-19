@@ -1534,7 +1534,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _power: 10
-  _index: 0
+  _effectIndex: 0
+  _soundIndex: 0
   _volume: 0
 --- !u!1 &594013432
 GameObject:
@@ -1959,7 +1960,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _power: 10
-  _index: 1
+  _effectIndex: 0
+  _soundIndex: 1
   _volume: 0.5
 --- !u!1 &777731055
 GameObject:
@@ -2258,7 +2260,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _power: 10
-  _index: 1
+  _effectIndex: 0
+  _soundIndex: 1
   _volume: 0.5
 --- !u!1 &989600264
 GameObject:
@@ -2356,7 +2359,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _power: 10
-  _index: 1
+  _effectIndex: 0
+  _soundIndex: 1
   _volume: 0.5
 --- !u!1 &1050191686
 GameObject:
@@ -2428,7 +2432,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _power: 10
-  _index: 1
+  _effectIndex: 0
+  _soundIndex: 1
   _volume: 0.5
 --- !u!1 &1102250982
 GameObject:
@@ -3173,7 +3178,7 @@ MonoBehaviour:
   _dashCoolTime: 0.5
   _dashDistance: 15
   _soundIndex: 0
-  _volume: 0.75
+  _volume: 0.5
 --- !u!114 &1949845270
 MonoBehaviour:
   m_ObjectHideFlags: 0

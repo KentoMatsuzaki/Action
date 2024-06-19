@@ -6,17 +6,31 @@ public class Attacker : MonoBehaviour
     /// <summary>攻撃力</summary>
     [SerializeField] private int _power;
 
+    /// <summary>エフェクトの識別子</summary>
+    [SerializeField] private int _effectIndex;
+
     /// <summary>SEの識別子</summary>
-    [SerializeField] private int _index;
+    [SerializeField] private int _soundIndex;
 
     /// <summary>SEの音量</summary>
     [SerializeField] private float _volume;
 
+    /// <summary>エフェクト</summary>
+    EffectManager _effect;
+
     /// <summary>サウンド</summary>
     CriSoundManager _soundManager;
 
+    /// <summary>攻撃力のプロパティ</summary>
+    public int Power
+    {
+        get => _power;
+        set => _power = value > 0 ? value : 0;
+    }
+
     private void Start()
     {
+        _effect = EffectManager.Instance;
         _soundManager = CriSoundManager.Instance;
     }
 
@@ -26,25 +40,36 @@ public class Attacker : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // 敵
-        if (IsEnemy()) PlayEnemySE(_index, _volume);
+        // プレイヤーが攻撃する場合の処理
+        if (IsPlayer())
+        {
+            // SEを再生
+            PlayPlayerSE(_soundIndex, _volume);
 
-        // プレイヤー
-        else PlayPlayerSE(_index, _volume);
+            PlayAttackEffectOnAttackPos(_effectIndex);
+        }
+
+        // 敵が攻撃する場合の処理
+        else
+        {
+            // SEを再生
+            PlayEnemySE(_soundIndex, _volume);
+        }
     }
 
     //-------------------------------------------------------------------------------
     // 攻撃に関する処理
     //-------------------------------------------------------------------------------
 
-    /// <summary>攻撃力を取得する</summary>
-    public int GetAttackDamage() => _power;
+    /// <summary>プレイヤーかどうか</summary>
+    private bool IsPlayer() => gameObject.tag == "PlayerAttack" ? true : false;
 
-    /// <summary>攻撃力を設定する</summary>
-    public void SetAttackDamage(int power) => _power = power > 0 ? power : 0;
+    /// <summary>自分の攻撃コライダーの位置を返す</summary>
+    private Vector3 GetAttackPosition() => transform.position;
 
-    /// <summary>敵かどうか</summary>
-    private bool IsEnemy() => gameObject.tag == "EnemyAttack" ? true : false;
+    /// <summary>攻撃した位置に攻撃エフェクトを表示する</summary>
+    private void PlayAttackEffectOnAttackPos(int index) =>
+        _effect.PlayAttackEffect(GetAttackPosition(), index);
 
     //-------------------------------------------------------------------------------
     // SEに関する処理

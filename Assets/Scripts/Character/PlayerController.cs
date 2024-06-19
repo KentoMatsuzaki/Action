@@ -236,9 +236,6 @@ public class PlayerController : MonoBehaviour
         // 攻撃コライダーを無効化
         Invoke(nameof(DisableCol), 0.1f);
 
-        // 攻撃エフェクトを表示
-        PlayAttackEffectOnAttackPos(0);
-
         // SEを再生
         PlaySE(_soundIndex, _volume);
     }
@@ -262,12 +259,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>攻撃コライダーの識別子を設定する</summary>
     private void SetCurrentColIndex(int index) => _currentColIndex = index;
 
-    /// <summary>自分の攻撃コライダーの位置を返す</summary>
-    private Vector3 GetAttackPosition() => _cols[_currentColIndex].transform.position;
-
-    /// <summary>攻撃した位置に攻撃エフェクトを表示する</summary>
-    private void PlayAttackEffectOnAttackPos(int index) =>
-        _effect.PlayAttackEffect(GetAttackPosition(), index);
+    
 
     //-------------------------------------------------------------------------------
     // 被ダメージ時のコールバックイベント

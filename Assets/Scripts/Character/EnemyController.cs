@@ -32,12 +32,11 @@ public class EnemyController : MonoBehaviour
         _animator = GetComponent<Animator>();
         _soundManager = CriSoundManager.Instance;
         _maxHP = _hp;
-        Attack();
     }
 
     private void Update()
     {
-        Chase(_player, previousPosition, 0.5f);
+        Flee(_player, previousPosition, 0.5f);
     }
 
     //-------------------------------------------------------------------------------
@@ -243,7 +242,7 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            // 移動量を速度に変換して設定する
+            // 速度を0にする
             SetSpeedParameter(0);
         }
 
@@ -255,20 +254,52 @@ public class EnemyController : MonoBehaviour
         return NodeStatus.Running;
     }
 
+    /// <summary>逃走アクション</summary>
+    public NodeStatus Flee(Transform player, Vector3 previous, float speed)
+    {
+        if (GetDistanceToPlayer() <= 5.0f)
+        {
+            // プレイヤーの方を向く
+            RotateAwayFromPlayer(player);
+
+            // 前方に移動する
+            MoveForward(speed);
+
+            // 移動量を速度に変換して設定する
+            SetSpeedParameter(GetSpeed(GetPositionDiff(previous)));
+
+            // 座標を更新する
+            previous = transform.position;
+        }
+        else
+        {
+            // 速度を0にする
+            SetSpeedParameter(0);
+        }
+
+        if (GetDistanceToPlayer() > 5.0f)
+        {
+            return NodeStatus.Success;
+        }
+
+        return NodeStatus.Running;
+    }
+
     /// <summary>プレイヤーが近くにいるか</summary>
     public bool IsPlayerClose() => GetDistanceToPlayer() <= _searchDistance;
 
-    /// <summary>十分なHPがあるか</summary>
+    /// <summary>プレイヤーが遠くにいるか</summary>
+    public bool IsPlayerAway() => GetDistanceToPlayer() > _searchDistance;
+
+    /// <summary>十分な体力があるか</summary>
     public bool HasEnoughHP() => _hp >= _maxHP / 2;
 
-    /// <summary>HPが不足しているか</summary>
+    /// <summary>体力が不足しているか</summary>
     public bool DoesNotHaveEnoughHP() => _hp < _maxHP / 2;
 
     //-------------------------------------------------------------------------------
     // BehaviourTreeに関する処理
     //-------------------------------------------------------------------------------
-
-
 
     /// <summary>プレイヤーとの距離を算出する</summary>
     private float GetDistanceToPlayer() =>
@@ -290,6 +321,11 @@ public class EnemyController : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, 
             GetRotationToPlayer(GetOptimizedDirectionToPlayer(player)), Time.deltaTime * 10f);
 
+    /// <summary>プレイヤーの逆を向く</summary>
+    private void RotateAwayFromPlayer(Transform player) =>
+        transform.rotation = Quaternion.Slerp(transform.rotation,
+            GetRotationToPlayer(-GetOptimizedDirectionToPlayer(player)), Time.deltaTime * 10f);
+
     /// <summary>前方に移動する</summary>
     private void MoveForward(float moveSpeed) => 
         transform.position += transform.forward * moveSpeed * Time.deltaTime;
@@ -297,8 +333,8 @@ public class EnemyController : MonoBehaviour
     /// <summary>座標の差分を求める</summary>
     private Vector3 GetPositionDiff(Vector3 previous) => transform.position - previous;
 
-    /// <summary>移動速度を求める</summary>
-    private float GetSpeed(Vector3 diff) => diff.magnitude / Time.deltaTime;
+    /// <summary>座標の差分から移動速度を求める</summary>
+    private float GetSpeed(Vector3 diff) => diff.magnitude;
 
     /// <summary>移動速度を設定する</summary>
     private void SetSpeedParameter(float speed) => _animator.SetFloat("Speed", speed);

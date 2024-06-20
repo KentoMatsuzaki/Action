@@ -25,6 +25,8 @@ public class EnemyController : MonoBehaviour
     /// <summary>ç≈ëÂHP</summary>
     int _maxHP;
 
+    private Vector3 previousPosition;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -52,6 +54,16 @@ public class EnemyController : MonoBehaviour
         }
 
         transform.position += transform.forward * 0.5f * Time.deltaTime;
+
+        Vector3 currentPosition = transform.position;
+
+        Vector3 positionDiff = currentPosition - previousPosition;
+
+        float speed = positionDiff.magnitude / Time.deltaTime;
+
+        _animator.SetFloat("Speed", speed);
+
+        previousPosition = currentPosition;
     }
 
     //-------------------------------------------------------------------------------

@@ -86,11 +86,11 @@ public class PlayerController : MonoBehaviour
     private void SetSpeed() => _animator.SetFloat("Speed", _moveControl.CurrentSpeed);
 
     /// <summary>接地判定を取得</summary>
-    private bool GetIsOnGround() => _groundCheck.IsOnGround ? true : false;
+    private bool GetIsOnGround() => _groundCheck.IsOnGround;
 
     /// <summary>接地判定を設定</summary>
     private void SetIsOnGround() =>
-        _animator.SetBool("IsOnGround", GetIsOnGround() ? true : false);
+        _animator.SetBool("IsOnGround", GetIsOnGround());
 
     //-------------------------------------------------------------------------------
     // 移動のコールバックイベント

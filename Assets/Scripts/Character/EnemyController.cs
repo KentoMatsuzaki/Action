@@ -37,33 +37,7 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
-        // プレイヤーの位置に向かって移動する
-        Vector3 direction = _player.position - transform.position;
-
-        // Y軸成分を無視する
-        direction.y = 0f;
-
-        // 方向ベクトルを正規化（長さを1にする）
-        direction.Normalize();
-
-        // プレイヤーの方向を向く
-        if (direction != Vector3.zero)
-        {
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f);
-        }
-
-        transform.position += transform.forward * 0.5f * Time.deltaTime;
-
-        Vector3 currentPosition = transform.position;
-
-        Vector3 positionDiff = currentPosition - previousPosition;
-
-        float speed = positionDiff.magnitude / Time.deltaTime;
-
-        _animator.SetFloat("Speed", speed);
-
-        previousPosition = currentPosition;
+        Chase(_player, previousPosition, 0.5f);
     }
 
     //-------------------------------------------------------------------------------
@@ -251,11 +225,29 @@ public class EnemyController : MonoBehaviour
     }
 
     /// <summary>追跡アクション</summary>
-    public NodeStatus Chase(Transform player)
+    public NodeStatus Chase(Transform player, Vector3 previous, float speed)
     {
-        //MoveToPlayer(player);
+        if (GetDistanceToPlayer() >= 1.5f)
+        {
+            // プレイヤーの方を向く
+            RotateTowardsPlayer(player);
 
-        if (GetDistanceToPlayer() < 1.0f)
+            // 前方に移動する
+            MoveForward(speed);
+
+            // 移動量を速度に変換して設定する
+            SetSpeedParameter(GetSpeed(GetPositionDiff(previous)));
+
+            // 座標を更新する
+            previous = transform.position;
+        }
+        else
+        {
+            // 移動量を速度に変換して設定する
+            SetSpeedParameter(0);
+        }
+
+        if (GetDistanceToPlayer() < 1.5f)
         {
             return NodeStatus.Success;
         }
@@ -279,13 +271,35 @@ public class EnemyController : MonoBehaviour
 
 
     /// <summary>プレイヤーとの距離を算出する</summary>
-    float GetDistanceToPlayer() =>
+    private float GetDistanceToPlayer() =>
         Vector3.Distance(transform.position, _player.position);
 
     /// <summary>プレイヤーへの方向を算出する</summary>
-    Vector3 GetDirectionToPlayer(Transform player)
+    private Vector3 GetDirectionToPlayer(Transform player)
         => player.position - transform.position;
+ 
+    /// <summary>プレイヤーへの最適化された方向を算出する</summary>
+    private Vector3 GetOptimizedDirectionToPlayer(Transform player) 
+        => new Vector3(GetDirectionToPlayer(player).x, 0f, GetDirectionToPlayer(player).z).normalized;
 
-    //private void MoveToPlayer(Transform player) =>
-    //    (GetDirectionToPlayer(player).normalized * Time.deltaTime);
+    /// <summary>プレイヤーへの回転方向を取得する</summary>
+    private Quaternion GetRotationToPlayer(Vector3 dir) => Quaternion.LookRotation(dir);
+
+    /// <summary>プレイヤーの方を向く</summary>
+    private void RotateTowardsPlayer(Transform player) => 
+        transform.rotation = Quaternion.Slerp(transform.rotation, 
+            GetRotationToPlayer(GetOptimizedDirectionToPlayer(player)), Time.deltaTime * 10f);
+
+    /// <summary>前方に移動する</summary>
+    private void MoveForward(float moveSpeed) => 
+        transform.position += transform.forward * moveSpeed * Time.deltaTime;
+
+    /// <summary>座標の差分を求める</summary>
+    private Vector3 GetPositionDiff(Vector3 previous) => transform.position - previous;
+
+    /// <summary>移動速度を求める</summary>
+    private float GetSpeed(Vector3 diff) => diff.magnitude / Time.deltaTime;
+
+    /// <summary>移動速度を設定する</summary>
+    private void SetSpeedParameter(float speed) => _animator.SetFloat("Speed", speed);
 }

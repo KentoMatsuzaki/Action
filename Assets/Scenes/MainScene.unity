@@ -2447,9 +2447,6 @@ GameObject:
   - component: {fileID: 1102250986}
   - component: {fileID: 1102250987}
   - component: {fileID: 1102250984}
-  - component: {fileID: 1102250991}
-  - component: {fileID: 1102250990}
-  - component: {fileID: 1102250989}
   - component: {fileID: 1102250988}
   m_Layer: 0
   m_Name: Enemy
@@ -2512,7 +2509,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
@@ -2539,26 +2536,8 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1102250988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1102250982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bc4954e2495401681e4dc93f6a28af6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _freezeAxis:
-    x: 0
-    y: 0
-    z: 0
-  Pushable: 1
-  _detectCollisions: 1
---- !u!143 &1102250989
-CharacterController:
+--- !u!136 &1102250988
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2572,56 +2551,14 @@ CharacterController:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 1.75
+  serializedVersion: 2
   m_Radius: 0.35
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
+  m_Height: 2
+  m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &1102250990
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1102250982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 544f06851df4541118f7b8a4095fe306, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _moveSpeed: 4
-  _turnSpeed: 15
-  _brakePower: 12
-  _accelerator: 6
-  _angle: 45
-  _lockAxis: {x: 0, y: 0, z: 0}
-  _movePriority: 1
-  _moveStopThreshold: 0.2
-  TurnPriority: 1
-  _turnStopThreshold: 0
---- !u!114 &1102250991
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1102250982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21501635e762343f1b16e2d5c7aed266, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _environmentLayer:
-    serializedVersion: 2
-    m_Bits: 1
-  _mass: 1
-  _height: 1.4
-  _radius: 0.5
 --- !u!1001 &1120067180
 PrefabInstance:
   m_ObjectHideFlags: 0

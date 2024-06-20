@@ -1,5 +1,5 @@
-using Unity.TinyCharacterController.Control;
 using UnityEngine;
+using Unity.TinyCharacterController.Control;
 
 /// <summary>敵の制御</summary>
 public class EnemyController : MonoBehaviour
@@ -22,15 +22,36 @@ public class EnemyController : MonoBehaviour
     /// <summary>サウンド</summary>
     CriSoundManager _soundManager;
 
-    /// <summary>移動制御</summary>
-    MoveControl _moveControl;
+    /// <summary>最大HP</summary>
+    int _maxHP;
 
     private void Start()
     {
         _animator = GetComponent<Animator>();
-        _moveControl = GetComponent<MoveControl>();
         _soundManager = CriSoundManager.Instance;
+        _maxHP = _hp;
         Attack();
+    }
+
+    private void Update()
+    {
+        // プレイヤーの位置に向かって移動する
+        Vector3 direction = _player.position - transform.position;
+
+        // Y軸成分を無視する
+        direction.y = 0f;
+
+        // 方向ベクトルを正規化（長さを1にする）
+        direction.Normalize();
+
+        // プレイヤーの方向を向く
+        if (direction != Vector3.zero)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f);
+        }
+
+        transform.position += transform.forward * 0.5f * Time.deltaTime;
     }
 
     //-------------------------------------------------------------------------------
@@ -220,7 +241,7 @@ public class EnemyController : MonoBehaviour
     /// <summary>追跡アクション</summary>
     public NodeStatus Chase(Transform player)
     {
-        MoveToPlayer(player);
+        //MoveToPlayer(player);
 
         if (GetDistanceToPlayer() < 1.0f)
         {
@@ -230,15 +251,20 @@ public class EnemyController : MonoBehaviour
         return NodeStatus.Running;
     }
 
+    /// <summary>プレイヤーが近くにいるか</summary>
+    public bool IsPlayerClose() => GetDistanceToPlayer() <= _searchDistance;
+
+    /// <summary>十分なHPがあるか</summary>
+    public bool HasEnoughHP() => _hp >= _maxHP / 2;
+
+    /// <summary>HPが不足しているか</summary>
+    public bool DoesNotHaveEnoughHP() => _hp < _maxHP / 2;
+
     //-------------------------------------------------------------------------------
     // BehaviourTreeに関する処理
     //-------------------------------------------------------------------------------
 
-    
 
-    /// <summary>プレイヤーが近くにいるかどうか</summary>
-    public bool IsPlayerClose() =>
-        GetDistanceToPlayer() <= _searchDistance ? true : false;
 
     /// <summary>プレイヤーとの距離を算出する</summary>
     float GetDistanceToPlayer() =>
@@ -248,6 +274,6 @@ public class EnemyController : MonoBehaviour
     Vector3 GetDirectionToPlayer(Transform player)
         => player.position - transform.position;
 
-    private void MoveToPlayer(Transform player) =>
-        _moveControl.Move(GetDirectionToPlayer(player) * Time.deltaTime);
+    //private void MoveToPlayer(Transform player) =>
+    //    (GetDirectionToPlayer(player).normalized * Time.deltaTime);
 }

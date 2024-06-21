@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 /// <summary>BehaviourTreeで敵を制御するクラス</summary>
 public class EnemyAI : MonoBehaviour
@@ -10,19 +11,22 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private Transform _player;
 
     /// <summary></summary>
-    [SerializeField] private float _speed;
+    [SerializeField] private float _moveSpeed = 0.5f;
 
     /// <summary></summary>
-    [SerializeField] private float _patrolRange;
+    [SerializeField] private float _fleeSpeed = 1f;
 
     /// <summary></summary>
-    [SerializeField] private float _fleeRange;
+    [SerializeField] private float _patrolRange = 5.0f;
 
     /// <summary></summary>
-    [SerializeField] private float _chaseRange;
+    [SerializeField] private float _fleeRange = 7.5f;
 
     /// <summary></summary>
-    [SerializeField] private float _searchRange;
+    [SerializeField] private float _chaseRange = 1.5f;
+
+    /// <summary></summary>
+    [SerializeField] private float _searchRange = 5.0f;
 
     /// <summary></summary>
     private Transform _patrolPoint;
@@ -33,14 +37,21 @@ public class EnemyAI : MonoBehaviour
     /// <summary></summary>
     private BaseNode _root;
 
+    /// <summary></summary>
+    private bool _canAttack = true;
+
     void Start()
     {
-        _enemy = GetComponent<EnemyController>();
+        _root = ConstructBehaviorTree();
+        _patrolPoint = _enemy.GetRandomPatrolPoint(_patrolRange);
     }
 
     void Update()
     {
-        
+        if (_root != null)
+        {
+            _root.Execute();
+        }
     }
 
     private BaseNode ConstructBehaviorTree()
@@ -48,25 +59,34 @@ public class EnemyAI : MonoBehaviour
         // 巡回アクション
         var patrolAction = new ActionNode(() =>
         {
-            return _enemy.BTPatrol(_patrolPoint, _previousPos, _speed, _patrolRange);
+            return _enemy.BTPatrol(_patrolPoint, _previousPos, _moveSpeed, _patrolRange);
         });
 
         // 逃走アクション
         var fleeAction = new ActionNode(() =>
         {
-            return _enemy.BTFlee(_player, _previousPos, _speed, _fleeRange);
+            return _enemy.BTFlee(_player, _previousPos, _fleeSpeed, _fleeRange);
         });
 
         // 追跡アクション
         var chaseAction = new ActionNode(() =>
         {
-            return _enemy.BTChase(_player, _previousPos, _speed, _chaseRange);
+            return _enemy.BTChase(_player, _previousPos, _moveSpeed, _chaseRange);
         });
 
         // 攻撃アクション
         var attackAction = new ActionNode(() =>
         {
-            return _enemy.BTAttack();
+            if(_canAttack)
+            {
+                _enemy.BTAttack();
+                StartCoroutine(AttackCooldown());
+                return NodeStatus.Success;
+            }
+            else
+            {
+                return NodeStatus.Failure;
+            }
         });
 
         // プレイヤーが近くにいるか
@@ -85,10 +105,15 @@ public class EnemyAI : MonoBehaviour
         var doesNotHaveEnoughHP = new ConditionNode(() =>
         _enemy.DoesNotHaveEnoughHP());
 
+        // ダメージを受けていないか
+        var isNotDamaged = new ConditionNode(() =>
+        _enemy.IsNotDamaged());
+
         // 攻撃シーケンス
         var attackSequence = new SequenceNode();
         attackSequence.AddChild(isPlayerClose);
         attackSequence.AddChild(hasEnoughHP);
+        attackSequence.AddChild(isNotDamaged);
         attackSequence.AddChild(chaseAction);
         attackSequence.AddChild(attackAction);
 
@@ -110,5 +135,12 @@ public class EnemyAI : MonoBehaviour
         rootSelector.AddChild(patrolSequence);
 
         return rootSelector;
+    }
+
+    IEnumerator AttackCooldown()
+    {
+        _canAttack = false;
+        yield return new WaitForSeconds(1.0f);
+        _canAttack = true;
     }
 }

@@ -1,3 +1,4 @@
+using UnityEditor.Purchasing;
 using UnityEngine;
 
 /// <summary>敵の制御</summary>
@@ -21,15 +22,8 @@ public class EnemyController : MonoBehaviour
     /// <summary>最大HP</summary>
     int _maxHP;
 
-    private Vector3 previousPosition;
-
-    private Transform _point;
-
-    private float _range = 3f;
-
-    private float _chaseRange = 1.5f;
-
-    private float _fleeRange = 5.0f;
+    /// <summary>ダメージフラグ</summary>
+    private bool _isDamaged = false;
 
     private void Start()
     {
@@ -70,6 +64,8 @@ public class EnemyController : MonoBehaviour
 
                 // SEを再生
                 PlayDeadSound();
+
+                _isDamaged = true;
             }
 
             // ダウンする場合
@@ -83,6 +79,8 @@ public class EnemyController : MonoBehaviour
 
                 // SEを再生
                 PlayDamageSound();
+
+                _isDamaged = true;
             }
 
             // 通常時
@@ -99,6 +97,8 @@ public class EnemyController : MonoBehaviour
 
                 // SEを再生
                 PlayDamageSound();
+
+                _isDamaged = true;
             }
         }
     }
@@ -153,6 +153,15 @@ public class EnemyController : MonoBehaviour
 
     /// <summary>起き上がりトリガーをオンにする</summary>
     private void SetRiseTrigger() => _animator.SetTrigger("Rise");
+
+    public void DamageCoolDown()
+    {
+        Invoke(nameof(UnsetDamageFlag), 1.0f);
+    }
+    public void UnsetDamageFlag()
+    {
+        _isDamaged = false;
+    }
 
     //-------------------------------------------------------------------------------
     // 攻撃のイベント
@@ -221,13 +230,10 @@ public class EnemyController : MonoBehaviour
     //-------------------------------------------------------------------------------
 
     /// <summary>攻撃アクション</summary>
-    public NodeStatus BTAttack()
+    public void BTAttack()
     {
         // 既存のAttackメソッドを呼び出す
         Attack();
-
-        // 一度の攻撃が完了したら成功を返す
-        return NodeStatus.Success; 
     }
 
     /// <summary>追跡アクション</summary>
@@ -333,6 +339,9 @@ public class EnemyController : MonoBehaviour
 
     /// <summary>体力が不足しているか</summary>
     public bool DoesNotHaveEnoughHP() => _hp < _maxHP / 2;
+
+    /// <summary>ダメージを受けているか</summary>
+    public bool IsNotDamaged() => !_isDamaged;
 
     //-------------------------------------------------------------------------------
     // BehaviourTreeに関する処理

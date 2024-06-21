@@ -1,5 +1,4 @@
 using UnityEngine;
-using Unity.TinyCharacterController.Control;
 
 /// <summary>敵の制御</summary>
 public class EnemyController : MonoBehaviour
@@ -27,16 +26,22 @@ public class EnemyController : MonoBehaviour
 
     private Vector3 previousPosition;
 
+    private Transform _point;
+
+    private float _range = 3f;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
         _soundManager = CriSoundManager.Instance;
         _maxHP = _hp;
+        //_point = GetRandomPatrolPoint(_range);
     }
 
     private void Update()
     {
-        Flee(_player, previousPosition, 0.5f);
+        //Flee(_player, previousPosition, 0.5f);
+        //Patrol(_point, previousPosition, 0.5f, _range);
     }
 
     //-------------------------------------------------------------------------------
@@ -285,6 +290,34 @@ public class EnemyController : MonoBehaviour
         return NodeStatus.Running;
     }
 
+    /// <summary>巡回アクション</summary>
+    public NodeStatus Patrol(Transform point, Vector3 previous, float speed, float range)
+    {
+        // 目的地に着いた場合
+        if(GetDistanceToPoint(point) < 0.5f)
+        {
+            // 目的地を更新
+            point = GetRandomPatrolPoint(range);
+            return NodeStatus.Success;
+        }
+
+        // 巡回処理
+
+        // プレイヤーの方を向く
+        RotateTowardsPoint(point);
+
+        // 前方に移動する
+        MoveForward(speed);
+
+        // 移動量を速度に変換して設定する
+        SetSpeedParameter(GetSpeed(GetPositionDiff(previous)));
+
+        // 座標を更新する
+        previous = transform.position;
+
+        return NodeStatus.Running;
+    }
+
     /// <summary>プレイヤーが近くにいるか</summary>
     public bool IsPlayerClose() => GetDistanceToPlayer() <= _searchDistance;
 
@@ -311,7 +344,7 @@ public class EnemyController : MonoBehaviour
  
     /// <summary>プレイヤーへの最適化された方向を算出する</summary>
     private Vector3 GetOptimizedDirectionToPlayer(Transform player) 
-        => new Vector3(GetDirectionToPlayer(player).x, 0f, GetDirectionToPlayer(player).z).normalized;
+        => new Vector3(GetDirectionToPoint(player).x, 0f, GetDirectionToPoint(player).z).normalized;
 
     /// <summary>プレイヤーへの回転方向を取得する</summary>
     private Quaternion GetRotationToPlayer(Vector3 dir) => Quaternion.LookRotation(dir);
@@ -338,4 +371,49 @@ public class EnemyController : MonoBehaviour
 
     /// <summary>移動速度を設定する</summary>
     private void SetSpeedParameter(float speed) => _animator.SetFloat("Speed", speed);
+
+    /// <summary>ランダムな巡回地点を取得する</summary>
+    public Transform GetRandomPatrolPoint(float range)
+    {
+        float randomX = Random.Range(-range, range);
+        float randomZ = Random.Range(-range, range);
+        var randomPos = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+
+        if(GameObject.Find("PatrolTarget") == null)
+        {
+            GameObject targetObject = new GameObject("PatrolTarget");
+            targetObject.transform.position = randomPos;
+            return targetObject.transform;
+        }
+        else
+        {
+            var target = GameObject.Find("PatrolTarget");
+            target.transform.position = randomPos;
+            return target.transform;
+        }
+    }
+
+    /// <summary>巡回地点までの距離を算出する</summary>
+    private float GetDistanceToPatrolPoint(Transform point) =>
+        Vector3.Distance(transform.position, _player.position);
+
+    /// <summary>ポイントとの距離を算出する</summary>
+    private float GetDistanceToPoint(Transform point) =>
+        Vector3.Distance(transform.position, point.position);
+
+    /// <summary>ポイントへの方向を算出する</summary>
+    private Vector3 GetDirectionToPoint(Transform point)
+        => point.position - transform.position;
+
+    /// <summary>ポイントへの最適化された方向を算出する</summary>
+    private Vector3 GetOptimizedDirectionToPoint(Transform point)
+        => new Vector3(GetDirectionToPoint(point).x, 0f, GetDirectionToPoint(point).z).normalized;
+
+    /// <summary>ポイントへの回転方向を取得する</summary>
+    private Quaternion GetRotationToPoint(Vector3 dir) => Quaternion.LookRotation(dir);
+
+    /// <summary>ポイントの方を向く</summary>
+    private void RotateTowardsPoint(Transform point) =>
+        transform.rotation = Quaternion.Slerp(transform.rotation,
+            GetRotationToPoint(GetOptimizedDirectionToPoint(point)), Time.deltaTime * 10f);
 }

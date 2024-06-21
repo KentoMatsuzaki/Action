@@ -15,9 +15,6 @@ public class EnemyController : MonoBehaviour
     /// <summary>体力</summary>
     [SerializeField, Header("敵のHP")] int _hp = 100;
 
-    /// <summary>索敵距離</summary>
-    [SerializeField, Header("索敵距離")] float _searchDistance;
-
     /// <summary>サウンド</summary>
     CriSoundManager _soundManager;
 
@@ -30,6 +27,10 @@ public class EnemyController : MonoBehaviour
 
     private float _range = 3f;
 
+    private float _chaseRange = 1.5f;
+
+    private float _fleeRange = 5.0f;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -40,7 +41,8 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
-        //Flee(_player, previousPosition, 0.5f);
+        //BTFlee(_player, previousPosition, 0.5f, _fleeRange);
+        //BTChase(_player, previousPosition, 0.5f, _chaseRange);
         //Patrol(_point, previousPosition, 0.5f, _range);
     }
 
@@ -229,9 +231,9 @@ public class EnemyController : MonoBehaviour
     }
 
     /// <summary>追跡アクション</summary>
-    public NodeStatus Chase(Transform player, Vector3 previous, float speed)
+    public NodeStatus BTChase(Transform player, Vector3 previous, float speed, float chaseRange)
     {
-        if (GetDistanceToPlayer() >= 1.5f)
+        if (GetDistanceToPlayer(player) >= chaseRange)
         {
             // プレイヤーの方を向く
             RotateTowardsPlayer(player);
@@ -251,7 +253,7 @@ public class EnemyController : MonoBehaviour
             SetSpeedParameter(0);
         }
 
-        if (GetDistanceToPlayer() < 1.5f)
+        if (GetDistanceToPlayer(player) < chaseRange)
         {
             return NodeStatus.Success;
         }
@@ -260,9 +262,9 @@ public class EnemyController : MonoBehaviour
     }
 
     /// <summary>逃走アクション</summary>
-    public NodeStatus Flee(Transform player, Vector3 previous, float speed)
+    public NodeStatus BTFlee(Transform player, Vector3 previous, float speed, float fleeRange)
     {
-        if (GetDistanceToPlayer() <= 5.0f)
+        if (GetDistanceToPlayer(player) <= fleeRange)
         {
             // プレイヤーの方を向く
             RotateAwayFromPlayer(player);
@@ -282,7 +284,7 @@ public class EnemyController : MonoBehaviour
             SetSpeedParameter(0);
         }
 
-        if (GetDistanceToPlayer() > 5.0f)
+        if (GetDistanceToPlayer(player) > fleeRange)
         {
             return NodeStatus.Success;
         }
@@ -291,7 +293,7 @@ public class EnemyController : MonoBehaviour
     }
 
     /// <summary>巡回アクション</summary>
-    public NodeStatus Patrol(Transform point, Vector3 previous, float speed, float range)
+    public NodeStatus BTPatrol(Transform point, Vector3 previous, float speed, float range)
     {
         // 目的地に着いた場合
         if(GetDistanceToPoint(point) < 0.5f)
@@ -319,10 +321,12 @@ public class EnemyController : MonoBehaviour
     }
 
     /// <summary>プレイヤーが近くにいるか</summary>
-    public bool IsPlayerClose() => GetDistanceToPlayer() <= _searchDistance;
+    public bool IsPlayerClose(Transform player, float range) 
+        => GetDistanceToPlayer(player) <= range;
 
     /// <summary>プレイヤーが遠くにいるか</summary>
-    public bool IsPlayerAway() => GetDistanceToPlayer() > _searchDistance;
+    public bool IsPlayerAway(Transform player, float range) 
+        => GetDistanceToPlayer(player) > range;
 
     /// <summary>十分な体力があるか</summary>
     public bool HasEnoughHP() => _hp >= _maxHP / 2;
@@ -335,8 +339,8 @@ public class EnemyController : MonoBehaviour
     //-------------------------------------------------------------------------------
 
     /// <summary>プレイヤーとの距離を算出する</summary>
-    private float GetDistanceToPlayer() =>
-        Vector3.Distance(transform.position, _player.position);
+    private float GetDistanceToPlayer(Transform player) =>
+        Vector3.Distance(transform.position, player.position);
 
     /// <summary>プレイヤーへの方向を算出する</summary>
     private Vector3 GetDirectionToPlayer(Transform player)

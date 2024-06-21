@@ -4,10 +4,25 @@ using UnityEngine;
 public class EnemyAI : MonoBehaviour
 {
     /// <summary></summary>
-    private BaseNode _root;
+    [SerializeField] private EnemyController _enemy;
 
     /// <summary></summary>
-    private EnemyController _enemy;
+    [SerializeField] private Transform _player;
+
+    /// <summary></summary>
+    [SerializeField] private float _speed;
+
+    /// <summary></summary>
+    [SerializeField] private float _range;
+
+    /// <summary></summary>
+    private Transform _patrolPoint;
+
+    /// <summary></summary>
+    private Vector3 _previousPos;
+
+    /// <summary></summary>
+    private BaseNode _root;
 
     void Start()
     {
@@ -24,29 +39,27 @@ public class EnemyAI : MonoBehaviour
     //    // アクションの定義
     //    var patrolAction = new ActionNode(() =>
     //    {
-    //        _enemy.Patrol();
-    //        return NodeStatus.Running;
+    //        return _enemy.BTPatrol(_patrolPoint, _previousPos, _speed, _range);
     //    });
 
-    //    var escapeAction = new ActionNode(() =>
+    //    var fleeAction = new ActionNode(() =>
     //    {
-    //        _enemy.Escape();
-    //        return NodeStatus.Running;
+    //        return _enemy.BTFlee(_player, _previousPos, _speed);
     //    });
 
     //    var chaseAction = new ActionNode(() =>
     //    {
-    //        return _enemy.Chase(player);
+    //        return _enemy.BTChase(_player, _previousPos, _speed);
     //    });
 
     //    var attackAction = new ActionNode(() =>
     //    {
-    //        return _enemy.Attack();
+    //        return _enemy.BTAttack();
     //    });
 
     //    // 条件の定義
-    //    var isPlayerVisible = new ConditionNode(() => enemy.IsPlayerInRange(player, detectionRange));
-    //    var isPlayerInAttackRange = new ConditionNode(() => enemy.IsPlayerInRange(player, attackRange));
+    //    var isPlayerClose = new ConditionNode(() => _enemy.IsPlayerClose());
+    //    var isPlayerAway = new ConditionNode(() => _enemy.IsPlayerInRange(player, attackRange));
 
     //    // シーケンスやセレクターの定義
     //    var attackSequence = new SequenceNode();

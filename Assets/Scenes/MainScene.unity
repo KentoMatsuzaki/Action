@@ -2470,7 +2470,6 @@ MonoBehaviour:
   _attackCol: {fileID: 594013429}
   _player: {fileID: 1949845268}
   _hp: 100
-  _searchDistance: 5
 --- !u!4 &1102250985
 Transform:
   m_ObjectHideFlags: 0

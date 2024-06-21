@@ -13,7 +13,16 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float _speed;
 
     /// <summary></summary>
-    [SerializeField] private float _range;
+    [SerializeField] private float _patrolRange;
+
+    /// <summary></summary>
+    [SerializeField] private float _fleeRange;
+
+    /// <summary></summary>
+    [SerializeField] private float _chaseRange;
+
+    /// <summary></summary>
+    [SerializeField] private float _searchRange;
 
     /// <summary></summary>
     private Transform _patrolPoint;
@@ -34,47 +43,72 @@ public class EnemyAI : MonoBehaviour
         
     }
 
-    //private BaseNode ConstructBehaviorTree()
-    //{
-    //    // アクションの定義
-    //    var patrolAction = new ActionNode(() =>
-    //    {
-    //        return _enemy.BTPatrol(_patrolPoint, _previousPos, _speed, _range);
-    //    });
+    private BaseNode ConstructBehaviorTree()
+    {
+        // 巡回アクション
+        var patrolAction = new ActionNode(() =>
+        {
+            return _enemy.BTPatrol(_patrolPoint, _previousPos, _speed, _patrolRange);
+        });
 
-    //    var fleeAction = new ActionNode(() =>
-    //    {
-    //        return _enemy.BTFlee(_player, _previousPos, _speed);
-    //    });
+        // 逃走アクション
+        var fleeAction = new ActionNode(() =>
+        {
+            return _enemy.BTFlee(_player, _previousPos, _speed, _fleeRange);
+        });
 
-    //    var chaseAction = new ActionNode(() =>
-    //    {
-    //        return _enemy.BTChase(_player, _previousPos, _speed);
-    //    });
+        // 追跡アクション
+        var chaseAction = new ActionNode(() =>
+        {
+            return _enemy.BTChase(_player, _previousPos, _speed, _chaseRange);
+        });
 
-    //    var attackAction = new ActionNode(() =>
-    //    {
-    //        return _enemy.BTAttack();
-    //    });
+        // 攻撃アクション
+        var attackAction = new ActionNode(() =>
+        {
+            return _enemy.BTAttack();
+        });
 
-    //    // 条件の定義
-    //    var isPlayerClose = new ConditionNode(() => _enemy.IsPlayerClose());
-    //    var isPlayerAway = new ConditionNode(() => _enemy.IsPlayerInRange(player, attackRange));
+        // プレイヤーが近くにいるか
+        var isPlayerClose = new ConditionNode(() => 
+        _enemy.IsPlayerClose(_player, _searchRange));
 
-    //    // シーケンスやセレクターの定義
-    //    var attackSequence = new SequenceNode();
-    //    attackSequence.AddChild(isPlayerInAttackRange);
-    //    attackSequence.AddChild(attackAction);
+        // プレイヤーが遠くにいるか
+        var isPlayerAway = new ConditionNode(() => 
+        _enemy.IsPlayerAway(_player, _searchRange));
 
-    //    var chaseSequence = new SequenceNode();
-    //    chaseSequence.AddChild(isPlayerVisible);
-    //    chaseSequence.AddChild(chaseAction);
+        // 十分な体力があるか
+        var hasEnoughHP = new ConditionNode(() =>
+        _enemy.HasEnoughHP());
 
-    //    var rootSelector = new SelectorNode();
-    //    rootSelector.AddChild(attackSequence);
-    //    rootSelector.AddChild(chaseSequence);
-    //    rootSelector.AddChild(patrolAction);
+        // 体力が不足しているか
+        var doesNotHaveEnoughHP = new ConditionNode(() =>
+        _enemy.DoesNotHaveEnoughHP());
 
-    //    return rootSelector;
-    //}
+        // 攻撃シーケンス
+        var attackSequence = new SequenceNode();
+        attackSequence.AddChild(isPlayerClose);
+        attackSequence.AddChild(hasEnoughHP);
+        attackSequence.AddChild(chaseAction);
+        attackSequence.AddChild(attackAction);
+
+        // 逃走シーケンス
+        var fleeSequence = new SequenceNode();
+        fleeSequence.AddChild(isPlayerClose);
+        fleeSequence.AddChild(doesNotHaveEnoughHP);
+        fleeSequence.AddChild(fleeAction);
+        
+        // 巡回シーケンス
+        var patrolSequence = new SequenceNode();
+        patrolSequence.AddChild(isPlayerAway);
+        patrolSequence.AddChild(patrolAction);
+
+        // セレクター
+        var rootSelector = new SelectorNode();
+        rootSelector.AddChild(attackSequence);
+        rootSelector.AddChild(fleeSequence);
+        rootSelector.AddChild(patrolSequence);
+
+        return rootSelector;
+    }
 }

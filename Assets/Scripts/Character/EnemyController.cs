@@ -1,4 +1,3 @@
-using UnityEditor.Purchasing;
 using UnityEngine;
 
 /// <summary>“G‚Ì§Œä</summary>

@@ -4,7 +4,6 @@ using UnityEngine;
 public class GameManager : SingletonMonoBehaviour<GameManager>
 {
     [SerializeField] float _bgmVolume = 0.5f;
-    [SerializeField] PlayerController _player;
     CriSoundManager _sound;
     UIManager _ui;
     int _index = 10;
@@ -30,10 +29,5 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     private float GetXPBar()
     {
         return _ui.GetXPBar();
-    }
-
-    public void OnLevelUp()
-    {
-        _player.LevelUp();
     }
 }

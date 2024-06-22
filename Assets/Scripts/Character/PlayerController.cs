@@ -282,14 +282,14 @@ public class PlayerController : MonoBehaviour
     {
         _level++;
 
-        if(_level == 2)
+        if (_level == 2)
         {
 
         }
 
-        foreach(var col in _cols)
+        foreach (var col in _cols)
         {
-            GetComponent<Attacker>().Power += 1;
+            col.gameObject.GetComponent<Attacker>().Power += 1;
         }
 
         _normalSpeed += 0.2f;

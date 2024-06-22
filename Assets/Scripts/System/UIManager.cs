@@ -13,6 +13,8 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
     /// <summary>ƒŒƒxƒ‹</summary>
     [SerializeField] private Text _level;
 
+    [SerializeField] private PlayerController _player;
+
     int _currentLevel = 1;
 
     GameManager _gameManager;
@@ -33,7 +35,7 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
     {
         if(xp == 1)
         {
-            _gameManager.OnLevelUp();
+            _player.LevelUp();
             _currentLevel++;
             _level.text = _currentLevel.ToString();
             _XpBar.fillAmount = 0;

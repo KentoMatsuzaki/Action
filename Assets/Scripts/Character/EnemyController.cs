@@ -50,7 +50,7 @@ public class EnemyController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // プレイヤーに攻撃を受けた場合 && ダメージを受けていない場合
-        if (other.gameObject.tag == "PlayerAttack" && ! IsDamaged())
+        if (other.gameObject.tag == "PlayerAttack" && ! GetIsDamaged())
         {
             // 生きている場合
             if (IsAlive())
@@ -67,9 +67,6 @@ public class EnemyController : MonoBehaviour
 
                 // SEを再生
                 PlayDeadSound();
-
-                // 経験値バーを更新
-                CallSetXPBar();
 
                 _isDamaged = true;
 
@@ -116,7 +113,7 @@ public class EnemyController : MonoBehaviour
     //-------------------------------------------------------------------------------
 
     /// <summary>攻撃を受けている最中か</summary>
-    private bool IsDamaged() => _animator.GetBool("IsDamaged");
+    private bool GetIsDamaged() => _animator.GetBool("IsDamaged");
 
     /// <summary>生きているか</summary>
     private bool IsAlive() => _hp > 0;
@@ -162,10 +159,6 @@ public class EnemyController : MonoBehaviour
     /// <summary>起き上がりトリガーをオンにする</summary>
     private void SetRiseTrigger() => _animator.SetTrigger("Rise");
 
-    public void DamageCoolDown()
-    {
-        Invoke(nameof(UnsetDamageFlag), 1.0f);
-    }
     public void UnsetDamageFlag()
     {
         _isDamaged = false;
@@ -183,8 +176,12 @@ public class EnemyController : MonoBehaviour
 
     public void InvokeDestroy()
     {
-        Invoke(nameof(DestroySelf), 1.5f);
+        Invoke(nameof(DestroySelf), 0.5f);
+        // 経験値バーを更新
+        CallSetXPBar();
     }
+
+    public bool IsDamaged() => _isDamaged;
 
     //-------------------------------------------------------------------------------
     // 攻撃のイベント

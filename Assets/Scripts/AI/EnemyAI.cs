@@ -48,7 +48,7 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
-        if(_enemy.IsDead()) return;
+        if(_enemy.IsDead() || _enemy.IsDamaged()) return;
 
         if (_root != null)
         {

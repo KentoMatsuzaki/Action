@@ -13,6 +13,8 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
     /// <summary>レベル</summary>
     [SerializeField] private Text _level;
 
+    int _currentLevel = 1;
+
     GameManager _gameManager;
 
     private void Start()
@@ -32,9 +34,14 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
         if(xp == 1)
         {
             _gameManager.OnLevelUp();
+            _currentLevel++;
+            _level.text = _currentLevel.ToString();
             _XpBar.fillAmount = 0;
         }
-        _XpBar.fillAmount = xp;
+        else
+        {
+            _XpBar.fillAmount = xp;
+        }
     }
 
     /// <summary>経験値バーの値を取得する</summary>

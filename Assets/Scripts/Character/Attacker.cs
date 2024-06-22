@@ -7,13 +7,16 @@ public class Attacker : MonoBehaviour
     [SerializeField] private int _power;
 
     /// <summary>エフェクトの識別子</summary>
-    [SerializeField] private int _effectIndex;
+    [SerializeField] public int _effectIndex;
 
     /// <summary>SEの識別子</summary>
     [SerializeField] private int _soundIndex;
 
     /// <summary>SEの音量</summary>
     [SerializeField] private float _volume;
+
+    /// <summary>プレイヤー</summary>
+    [SerializeField] private PlayerController _player;
 
     /// <summary>エフェクト</summary>
     EffectManager _effect;
@@ -46,6 +49,7 @@ public class Attacker : MonoBehaviour
             // SEを再生
             PlayPlayerSE(_soundIndex, _volume);
 
+            if(_player._level >= 2)
             PlayAttackEffectOnAttackPos(_effectIndex);
         }
 

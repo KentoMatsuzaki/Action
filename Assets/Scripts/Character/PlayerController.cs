@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour
     UIManager _uiManager;
 
     /// <summary>ƒŒƒxƒ‹</summary>
-    int _level = 1;
+    public int _level = 1;
 
     private void Start()
     {

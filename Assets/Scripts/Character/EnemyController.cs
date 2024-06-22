@@ -18,6 +18,9 @@ public class EnemyController : MonoBehaviour
     /// <summary>サウンド</summary>
     CriSoundManager _soundManager;
 
+    /// <summary>UI</summary>
+    GameManager _gameManager;
+
     /// <summary>最大HP</summary>
     int _maxHP;
 
@@ -28,6 +31,7 @@ public class EnemyController : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _soundManager = CriSoundManager.Instance;
+        _gameManager = GameManager.Instance;
         _maxHP = _hp;
         //_point = GetRandomPatrolPoint(_range);
     }
@@ -64,7 +68,12 @@ public class EnemyController : MonoBehaviour
                 // SEを再生
                 PlayDeadSound();
 
+                // 経験値バーを更新
+                CallSetXPBar();
+
                 _isDamaged = true;
+
+                // 死亡エフェクトを再生
             }
 
             // ダウンする場合
@@ -113,7 +122,7 @@ public class EnemyController : MonoBehaviour
     private bool IsAlive() => _hp > 0;
 
     /// <summary>死んでいるか</summary>
-    private bool IsDead() => _hp <= 0;
+    public bool IsDead() => _hp <= 0;
 
     /// <summary>ダウンするか</summary>
     bool IsDown() => _animator.GetInteger("HitCount") == 4 ? true : false;
@@ -160,6 +169,21 @@ public class EnemyController : MonoBehaviour
     public void UnsetDamageFlag()
     {
         _isDamaged = false;
+    }
+
+    private void CallSetXPBar()
+    {
+        _gameManager.SetXPBar();
+    }
+
+    private void DestroySelf()
+    {
+        Destroy(gameObject);
+    }
+
+    public void InvokeDestroy()
+    {
+        Invoke(nameof(DestroySelf), 1.5f);
     }
 
     //-------------------------------------------------------------------------------

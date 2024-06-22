@@ -10,15 +10,22 @@ public class CriSoundManager : SingletonMonoBehaviour<CriSoundManager>
 
     /// <summary>キューシート名</summary>
     [SerializeField,
-        Header("キューシート名")] private List<string> _cueSheetName;
+        Header("キューシート名")] public List<string> _cueSheetName;
 
     /// <summary>プレイヤーのSE</summary>
     [SerializeField,
-        Header("キュー名")] public List<string> _playerCueNames;
+        Header("味方のSE")] public List<string> _playerCueNames;
 
     /// <summary>敵のSE</summary>
     [SerializeField,
-        Header("キュー名")] public List<string> _enemyCueNames;
+        Header("敵のSE")] public List<string> _enemyCueNames;
+
+    /// <summary>効果音のSE</summary>
+    [SerializeField,
+        Header("効果音のSE")] public List<string> _seCueNames;
+
+    /// <summary>BGM</summary>
+    [SerializeField, Header("BGM")] public List<string> _bgmCueName;
 
     /// <summary>プレイヤー</summary>
     private CriAtomExPlayer _player;

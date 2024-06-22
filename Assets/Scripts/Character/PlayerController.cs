@@ -39,6 +39,9 @@ public class PlayerController : MonoBehaviour
     /// <summary>ブリンクの移動距離</summary>
     [SerializeField, Header("ブリンクの移動距離")] float _dashDistance = 15f;
 
+    /// <summary>プレイヤーの体力</summary>
+    [SerializeField, Header("プレイヤーの体力")] int _hp = 50;
+
     /// <summary>SEの識別子</summary>
     [SerializeField, Header("SEのインデックス")] int _soundIndex;
 
@@ -57,6 +60,12 @@ public class PlayerController : MonoBehaviour
     /// <summary>サウンド</summary>
     CriSoundManager _soundManager;
 
+    /// <summary>UI</summary>
+    UIManager _uiManager;
+
+    /// <summary>レベル</summary>
+    int _level = 1;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -67,6 +76,7 @@ public class PlayerController : MonoBehaviour
         _passiveCol = GetComponent<Collider>();
         _effect = EffectManager.Instance;
         _soundManager = CriSoundManager.Instance;
+        _uiManager = UIManager.Instance;
     }
 
     private void Update()
@@ -268,7 +278,24 @@ public class PlayerController : MonoBehaviour
     /// <summary>攻撃コライダーの識別子を設定する</summary>
     private void SetCurrentColIndex(int index) => _currentColIndex = index;
 
-    
+    public void LevelUp()
+    {
+        _level++;
+
+        if(_level == 2)
+        {
+
+        }
+
+        foreach(var col in _cols)
+        {
+            GetComponent<Attacker>().Power += 1;
+        }
+
+        _normalSpeed += 0.2f;
+        _sprintSpeed += 0.2f;
+        _jumpControl.JumpHeight += 0.2f;
+    }
 
     //-------------------------------------------------------------------------------
     // 被ダメージ時のコールバックイベント
@@ -279,17 +306,34 @@ public class PlayerController : MonoBehaviour
         // 敵に攻撃された場合
         if (other.gameObject.tag == "EnemyAttack")
         {
-            // ダメージフラグをオン
-            SetIsDamagedTrue();
+            // ダメージ処理
+            TakeDamage(other);
 
-            // ダメージフラグをオフ
-            Invoke(nameof(SetIsDamagedFalse), 0.1f);
+            // 体力バーを設定
+            SetHPBar();
 
-            // ダメージエフェクトを表示
-            PlayDamageEffectOnClosestDamagePos(0, other);
+            // 死亡している場合
+            if (IsDead())
+            {
+                PlayDeadAnimation();
+                GetComponent<PlayerInput>().enabled = false;
+                GetComponent<PlayerController>().enabled = false;
+            }
 
-            // SEを再生
-            PlaySE(2, 1.25f);
+            else
+            {
+                // ダメージフラグをオン
+                SetIsDamagedTrue();
+
+                // ダメージフラグをオフ
+                Invoke(nameof(SetIsDamagedFalse), 0.1f);
+
+                // ダメージエフェクトを表示
+                PlayDamageEffectOnClosestDamagePos(0, other);
+
+                // SEを再生
+                PlaySE(2, 1.25f);
+            }
         }
     }
 
@@ -315,6 +359,18 @@ public class PlayerController : MonoBehaviour
     /// <summary>相手の攻撃コライダーから最も近いコライダー上の位置を返す</summary>
     private Vector3 GetImpactPosition(Collider other) 
         => _passiveCol.ClosestPoint(GetDamagePosition(other));
+
+    /// <summary>被ダメージ処理</summary>
+    private void TakeDamage(Collider other) => _hp -= other.GetComponent<Attacker>().Power;
+    
+    /// <summary>死亡判定</summary>
+    private bool IsDead() => _hp <= 0;
+
+    /// <summary>死亡アニメーションを再生</summary>
+    private void PlayDeadAnimation() => _animator.Play("Die");
+
+    /// <summary>体力バーを更新</summary>
+    private void SetHPBar() => _uiManager.SetHPBar((float) _hp / 10);
 
     //-------------------------------------------------------------------------------
     // SEの再生に関する処理

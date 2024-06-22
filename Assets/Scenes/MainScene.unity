@@ -434,6 +434,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2827175173849084459, guid: 5f838c6d56e4a2749a782385f68f3f40, type: 3}
+      propertyPath: _bgmCueName.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2827175173849084459, guid: 5f838c6d56e4a2749a782385f68f3f40, type: 3}
+      propertyPath: _seCueNames.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2827175173849084459, guid: 5f838c6d56e4a2749a782385f68f3f40, type: 3}
+      propertyPath: '_bgmCueName.Array.data[0]'
+      value: BGM
+      objectReference: {fileID: 0}
+    - target: {fileID: 2827175173849084459, guid: 5f838c6d56e4a2749a782385f68f3f40, type: 3}
+      propertyPath: '_seCueNames.Array.data[0]'
+      value: "\u30A2\u30A4\u30C6\u30E0\u53D6\u5F97"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2827175173849084459, guid: 5f838c6d56e4a2749a782385f68f3f40, type: 3}
+      propertyPath: '_seCueNames.Array.data[1]'
+      value: "\u56DE\u5FA9"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2827175173849084459, guid: 5f838c6d56e4a2749a782385f68f3f40, type: 3}
+      propertyPath: '_seCueNames.Array.data[2]'
+      value: "\u5F37\u5316"
+      objectReference: {fileID: 0}
     - target: {fileID: 3517274432705453156, guid: 5f838c6d56e4a2749a782385f68f3f40, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.7024624

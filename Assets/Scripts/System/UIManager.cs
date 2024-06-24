@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 /// <summary>UIを管理するクラス</summary>
 public class UIManager : SingletonMonoBehaviour<UIManager>
@@ -8,7 +9,7 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
     [SerializeField] private Image _hpBar;
 
     /// <summary>経験値バー</summary>
-    [SerializeField] private Image _XpBar;
+    [SerializeField] private Image _xpBar;
 
     /// <summary>レベル</summary>
     [SerializeField] private Text _level;
@@ -17,25 +18,32 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
 
     int _currentLevel = 1;
 
+    private void Start()
+    {
+        DOTween.Init();
+    }
+
     /// <summary>体力バーの値を設定する</summary>
     public void SetHPBar(float hp)
     {
-        _hpBar.fillAmount = hp;
+        _hpBar.DOFillAmount(hp, 1.0f).SetEase(Ease.Linear).SetEase(Ease.OutCubic);
     }
 
     /// <summary>経験値バーの値を設定する</summary>
     public void SetXpBar(float xp)
     {
-        if(xp == 1)
+        _xpBar.DOFillAmount(xp, 1.0f).SetEase(Ease.Linear).SetEase(Ease.OutCubic);
+        Invoke(nameof(CallLevelUp), 1.1f);
+    }
+
+    private void CallLevelUp()
+    {
+        if (_xpBar.fillAmount == 1)
         {
             _player.LevelUp();
             _currentLevel++;
             _level.text = _currentLevel.ToString();
-            _XpBar.fillAmount = 0;
-        }
-        else
-        {
-            _XpBar.fillAmount = xp;
+            _xpBar.fillAmount = 0;
         }
     }
 
@@ -43,6 +51,6 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
     /// <returns></returns>
     public float GetXPBar()
     {
-        return _XpBar.fillAmount;
+        return _xpBar.fillAmount;
     }
 }

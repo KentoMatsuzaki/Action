@@ -2463,7 +2463,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hpBar: {fileID: 1245523319}
-  _XpBar: {fileID: 1746370677}
+  _xpBar: {fileID: 1746370677}
   _level: {fileID: 917810861}
   _player: {fileID: 1984039343}
 --- !u!1001 &194914863

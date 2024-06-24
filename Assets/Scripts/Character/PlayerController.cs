@@ -406,7 +406,7 @@ public class PlayerController : MonoBehaviour
     private void PlayDeadAnimation() => _animator.Play("Die");
 
     /// <summary>体力バーを更新</summary>
-    private void SetHPBar() => _uiManager.SetHPBar((float) _hp / 10);
+    private void SetHPBar() => _uiManager.SetHPBar((float) _hp / 50);
 
     //-------------------------------------------------------------------------------
     // SEの再生に関する処理

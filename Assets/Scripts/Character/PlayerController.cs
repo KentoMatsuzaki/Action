@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using Unity.TinyCharacterController.Control;
 using Unity.TinyCharacterController.Check;
@@ -373,6 +374,8 @@ public class PlayerController : MonoBehaviour
                 PlayDeadAnimation();
                 GetComponent<PlayerInput>().enabled = false;
                 GetComponent<PlayerController>().enabled = false;
+                _uiManager._resultText.text = "ゲームオーバー";
+                Invoke(nameof(ResetScene), 2.0f);
             }
 
             else
@@ -426,6 +429,11 @@ public class PlayerController : MonoBehaviour
 
     /// <summary>体力バーを更新</summary>
     private void SetHPBar() => _uiManager.SetHPBar((float) _hp / 50);
+
+    private void ResetScene()
+    {
+        SceneManager.LoadScene("BattleScene");
+    }
 
     //-------------------------------------------------------------------------------
     // SEの再生に関する処理

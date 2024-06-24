@@ -17,13 +17,6 @@ public class UIManager : SingletonMonoBehaviour<UIManager>
 
     int _currentLevel = 1;
 
-    GameManager _gameManager;
-
-    private void Start()
-    {
-        _gameManager = GameManager.Instance;
-    }
-
     /// <summary>‘Ì—Íƒo[‚Ì’l‚ğİ’è‚·‚é</summary>
     public void SetHPBar(float hp)
     {

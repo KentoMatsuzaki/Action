@@ -233,12 +233,15 @@ public class PlayerController : MonoBehaviour
     public void OnAttack(InputAction.CallbackContext context)
     {
         // 攻撃アクションが長押しされた場合
-        if (context.interaction is HoldInteraction && context.performed) 
+        if (context.interaction is HoldInteraction && context.performed)
             SetSpecialAttackTrigger();
 
         // 攻撃アクションが押された場合
         else if (context.interaction is PressInteraction && context.performed)
+        {
             SetNormalAttackTrigger();
+            RotateTowardsEnemy();
+        }
     }
 
     /// <summary>攻撃が当たる瞬間に呼ばれるイベント</summary>
@@ -295,6 +298,39 @@ public class PlayerController : MonoBehaviour
         _normalSpeed += 0.2f;
         _sprintSpeed += 0.2f;
         _jumpControl.JumpHeight += 0.2f;
+
+        _soundManager.Play("CueSheet_0", "強化", 0.5f);
+    }
+
+    GameObject FindClosestEnemy()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject closestEnemy = null;
+        float closestDistance = Mathf.Infinity;
+
+        foreach (GameObject enemy in enemies)
+        {
+            float distanceToEnemy = Vector3.Distance(transform.position, enemy.transform.position);
+            if (distanceToEnemy < closestDistance && distanceToEnemy <= 3.0f)
+            {
+                closestDistance = distanceToEnemy;
+                closestEnemy = enemy;
+            }
+        }
+
+        return closestEnemy;
+    }
+
+    void RotateTowardsEnemy()
+    {
+        GameObject closestEnemy = FindClosestEnemy();
+
+        if (closestEnemy == null) return;
+
+        // 敵の方向を向く
+        Vector3 dir = (closestEnemy.transform.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(dir.x, 0, dir.z));
+        transform.rotation = lookRotation;
     }
 
     //-------------------------------------------------------------------------------

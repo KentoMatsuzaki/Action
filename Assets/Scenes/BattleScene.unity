@@ -1590,7 +1590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22701b8f220ce74458904554430ab4cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bgmVolume: 0.5
+  _bgmVolume: 0.25
 --- !u!4 &121125200
 Transform:
   m_ObjectHideFlags: 0

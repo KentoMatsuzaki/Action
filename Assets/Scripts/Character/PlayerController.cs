@@ -66,6 +66,8 @@ public class PlayerController : MonoBehaviour
     /// <summary>レベル</summary>
     public int _level = 1;
 
+    [SerializeField] GameObject[] _eff;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -162,7 +164,7 @@ public class PlayerController : MonoBehaviour
         PlayJumpAnimation();
 
         // SEを再生
-        PlaySE(4, 0.75f);
+        PlaySE(3, 0.75f);
     }
     //-------------------------------------------------------------------------------
     // ジャンプに関する処理
@@ -200,10 +202,13 @@ public class PlayerController : MonoBehaviour
             Dash();
 
             // SEを再生
-            PlaySE(3, 0.75f);
+            PlaySE(4, 0.75f);
 
             // フラグをオンにする
             Invoke(nameof(SetCanDash), _dashCoolTime);
+
+            EnableEff(3);
+            Invoke(nameof(DisableBlinkEff), 0.6f);
         }
     }
 
@@ -285,10 +290,14 @@ public class PlayerController : MonoBehaviour
     {
         _level++;
 
-        if (_level == 2)
+        if (_level == 3)
         {
-
+            EnableEff(2);
         }
+
+
+        EnableEff(0);
+        Invoke(nameof(DisableLevelUpEff), 1.5f);
 
         foreach (var col in _cols)
         {
@@ -332,6 +341,16 @@ public class PlayerController : MonoBehaviour
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(dir.x, 0, dir.z));
         transform.rotation = lookRotation;
     }
+
+    void EnableEff(int num)
+    {
+        _eff[num].SetActive(true);
+    }
+
+    void DisableLevelUpEff() => _eff[0].SetActive(false);
+    void DisableAwakeEff() => _eff[1].SetActive(false);
+    void DisableBlinkEff() => _eff[3].SetActive(false);
+
 
     //-------------------------------------------------------------------------------
     // 被ダメージ時のコールバックイベント
